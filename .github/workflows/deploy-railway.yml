@@ -1,0 +1,55 @@
+name: Deploy to Railway
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: railway-production
+  cancel-in-progress: true
+
+env:
+  # Fixed Railway target for this repository.
+  RAILWAY_PROJECT_NAME: fulfilling-courage
+  RAILWAY_PROJECT_ID: 83ddb758-c283-4deb-8a47-f546f3110fe2
+
+jobs:
+  deploy:
+    name: Deploy production
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate build before deployment
+        run: npm run build
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Confirm Railway target
+        run: |
+          echo "Deploying to Railway project: ${RAILWAY_PROJECT_NAME}"
+          echo "Project ID: ${RAILWAY_PROJECT_ID}"
+
+      - name: Deploy to Railway
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
+          RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
+        run: |
+          railway link --project "${RAILWAY_PROJECT_ID}" --environment "${RAILWAY_ENVIRONMENT_ID}" --service "${RAILWAY_SERVICE}"
+          railway up --ci
