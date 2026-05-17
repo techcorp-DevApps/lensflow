@@ -1,1 +1,36 @@
-# Stub entity
+{
+  "name": "ShootChecklist",
+  "type": "object",
+  "properties": {
+    "booking_id": {
+      "type": "string",
+      "description": "Associated booking ID"
+    },
+    "session_type": {
+      "type": "string",
+      "description": "Session type"
+    },
+    "items": {
+      "type": "array",
+      "description": "Checklist items with completion status",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "completed": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "booking_id",
+    "items"
+  ]
+}
