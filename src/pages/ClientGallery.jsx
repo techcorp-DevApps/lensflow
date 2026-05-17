@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { galleriesApi } from "@/api/galleries";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Lock, Camera, Star, Download, Heart } from "lucide-react";
+import { Lock, Camera, Download, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";

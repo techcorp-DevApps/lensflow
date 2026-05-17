@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { galleriesApi } from "@/api/galleries";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Plus, Image, Lock, Eye, Archive, Upload, Trash2, ExternalLink, Copy, Check } from "lucide-react";
+import { Plus, Image, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
