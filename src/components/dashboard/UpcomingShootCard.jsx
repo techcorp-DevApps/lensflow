@@ -1,6 +1,6 @@
 import React from "react";
 import { format } from "date-fns";
-import { MapPin, Clock, User } from "lucide-react";
+import { MapPin, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const statusStyles = {
