@@ -25,9 +25,9 @@ Triggers:
 
 Checks:
 1. `quality` job (blocking): `npm ci` → `npm run lint` → `npm run build`
-2. `typecheck` job (non-blocking, temporary): `npm ci` → `npm run typecheck`
+2. `typecheck-report` job (non-blocking, temporary): `npm ci` → `npm run typecheck`
 
-> Typecheck is currently non-blocking due to pre-existing repository-wide TS issues. Once baseline typing is fixed, remove `continue-on-error: true` to make it blocking again.
+> Typecheck remains non-blocking due to pre-existing repository-wide TypeScript issues. After baseline cleanup, remove `continue-on-error: true` and rename the job back to a blocking `typecheck` gate.
 
 ### 2) Continuous Deployment to Railway (Production)
 
@@ -93,3 +93,9 @@ Use an alternative only when measured requirements justify it:
 - Introduce a backend migration workflow once database-access code exists.
 - Add preview deployment workflow for pull requests if environment strategy requires it.
 - Add smoke tests against deployed URL after production deployment.
+
+
+## Conflict Resolution Notes
+
+- Reconciled CI naming and gating by keeping a strict `quality` gate and preserving visibility with a dedicated non-blocking typecheck report job.
+- Preserved Railway project pinning and secrets contract while aligning workflow structure with latest PR expectations.

@@ -10,8 +10,10 @@ concurrency:
   group: railway-production
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 env:
-  # Fixed Railway target for this repository.
   RAILWAY_PROJECT_NAME: fulfilling-courage
   RAILWAY_PROJECT_ID: 83ddb758-c283-4deb-8a47-f546f3110fe2
 
