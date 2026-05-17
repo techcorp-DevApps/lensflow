@@ -1,5 +1,6 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
+import { contractsApi } from "@/api/contracts";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarDays, FileText, Image, DollarSign, Camera, MessageCircle } from "lucide-react";
 import { format, isAfter, startOfToday } from "date-fns";
@@ -18,7 +19,7 @@ export default function Dashboard() {
 
   const { data: contracts = [] } = useQuery({
     queryKey: ["contracts"],
-    queryFn: () => base44.entities.Contract.list(),
+    queryFn: () => contractsApi.list(),
   });
 
   const { data: galleries = [] } = useQuery({
