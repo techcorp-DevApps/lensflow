@@ -1,1 +1,46 @@
-# Stub entity
+{
+  "name": "ChecklistTemplate",
+  "type": "object",
+  "properties": {
+    "session_type": {
+      "type": "string",
+      "enum": [
+        "portrait",
+        "wedding",
+        "family",
+        "newborn",
+        "maternity",
+        "event",
+        "commercial",
+        "headshot"
+      ],
+      "description": "Session type this checklist applies to"
+    },
+    "items": {
+      "type": "array",
+      "description": "Checklist items",
+      "items": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "gear",
+              "preparation",
+              "location",
+              "client_communication",
+              "post_shoot"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "session_type",
+    "items"
+  ]
+}
