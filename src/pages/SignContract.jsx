@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { contractsApi } from "@/api/contracts";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { CheckCircle, Camera, FileText, User, Mail, Calendar, Pen, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -23,14 +23,13 @@ export default function SignContract() {
 
   const { data: contract, isLoading } = useQuery({
     queryKey: ["public-contract", contractId],
-    queryFn: () => base44.entities.Contract.filter({ id: contractId }),
+    queryFn: () => contractsApi.get(contractId),
     enabled: !!contractId,
-    select: (data) => data[0],
   });
 
   const signMutation = useMutation({
     mutationFn: () =>
-      base44.entities.Contract.update(contractId, {
+      contractsApi.update(contractId, {
         signature,
         signed_date: new Date().toISOString(),
         status: "signed",
@@ -43,7 +42,7 @@ export default function SignContract() {
     queryKey: ["mark-viewed", contractId],
     queryFn: async () => {
       if (contract && contract.status === "sent") {
-        await base44.entities.Contract.update(contractId, { status: "viewed" });
+        await contractsApi.update(contractId, { status: "viewed" });
       }
       return null;
     },

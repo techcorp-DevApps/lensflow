@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { contractsApi } from "@/api/contracts";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Plus, FileText, Send, Eye, CheckCircle, Clock, Search } from "lucide-react";
@@ -35,7 +36,7 @@ export default function Contracts() {
 
   const { data: contracts = [], isLoading } = useQuery({
     queryKey: ["contracts"],
-    queryFn: () => base44.entities.Contract.list("-created_date"),
+    queryFn: () => contractsApi.list({ sort_by: "-created_date" }),
   });
 
   const { data: bookings = [] } = useQuery({
@@ -44,7 +45,7 @@ export default function Contracts() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Contract.create(data),
+    mutationFn: (data) => contractsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contracts"] });
       setShowForm(false);
@@ -53,7 +54,7 @@ export default function Contracts() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Contract.update(id, data),
+    mutationFn: ({ id, data }) => contractsApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contracts"] });
       toast({ title: "Contract updated" });
