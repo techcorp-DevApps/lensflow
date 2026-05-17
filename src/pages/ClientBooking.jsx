@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { galleriesApi } from "@/api/galleries";
 import { format } from "date-fns";
 import { Calendar, MapPin, Camera, Clock, FileText, CheckCircle2, DollarSign, AlertCircle, XCircle, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -46,7 +47,7 @@ export default function ClientBooking() {
 
     const [contractResults, galleryResults] = await Promise.all([
       base44.entities.Contract.filter({ booking_id: b.id }),
-      b.gallery_id ? base44.entities.Gallery.filter({ id: b.gallery_id }) : Promise.resolve([]),
+      b.gallery_id ? galleriesApi.filter({ id: b.gallery_id }) : Promise.resolve([]),
     ]);
     setContracts(contractResults || []);
     if (galleryResults?.length > 0) setGallery(galleryResults[0]);

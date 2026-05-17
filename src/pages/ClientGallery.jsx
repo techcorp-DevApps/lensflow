@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { galleriesApi } from "@/api/galleries";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lock, Camera, Star, Download, Heart } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -20,7 +21,7 @@ export default function ClientGallery() {
 
   const { data: gallery, isLoading: loadingGallery } = useQuery({
     queryKey: ["public-gallery", galleryId],
-    queryFn: () => base44.entities.Gallery.filter({ id: galleryId }),
+    queryFn: () => galleriesApi.filter({ id: galleryId }),
     enabled: !!galleryId,
     select: (data) => data[0],
   });
