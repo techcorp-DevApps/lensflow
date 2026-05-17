@@ -1,0 +1,447 @@
+{
+  "schema": "illuminate.logs.codex.v1",
+  "generated_from": "user_pasted_activity_logs",
+  "record_count": 36,
+  "timezone": "local_unspecified",
+  "notes": [
+    "Timestamps are normalized to ISO-8601 local time without timezone offset because the source logs did not specify timezone.",
+    "Events without visible Details blocks use details: null.",
+    "The SendEmail failure is preserved with error.code and error.message.",
+    "Output is intended for Codex ingestion, migration debugging, and Base44-to-Railway parity analysis."
+  ],
+  "events": [
+    {
+      "event_id": "log_0001",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:34:58",
+      "timestamp_raw": "5/16/2026, 10:34:58 PM",
+      "details": {
+        "filter_fields": "id",
+        "sort": "",
+        "limit": "5000",
+        "skip": "",
+        "fields": "",
+        "entity_name": "Gallery"
+      },
+      "error": null
+    },
+    {
+      "event_id": "log_0002",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:34:56",
+      "timestamp_raw": "5/16/2026, 10:34:56 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0003",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:31:51",
+      "timestamp_raw": "5/16/2026, 10:31:51 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0004",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:31:50",
+      "timestamp_raw": "5/16/2026, 10:31:50 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0005",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:30:55",
+      "timestamp_raw": "5/16/2026, 10:30:55 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0006",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:30:54",
+      "timestamp_raw": "5/16/2026, 10:30:54 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0007",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:29:57",
+      "timestamp_raw": "5/16/2026, 10:29:57 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0008",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:29:56",
+      "timestamp_raw": "5/16/2026, 10:29:56 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0009",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:24:54",
+      "timestamp_raw": "5/16/2026, 10:24:54 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0010",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:24:52",
+      "timestamp_raw": "5/16/2026, 10:24:52 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0011",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:24:52",
+      "timestamp_raw": "5/16/2026, 10:24:52 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0012",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T22:24:51",
+      "timestamp_raw": "5/16/2026, 10:24:51 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0013",
+      "source": "base44_activity_log_export",
+      "type": "app.integration.executed",
+      "user": "lufp005x@gmail.com",
+      "timestamp": "2026-05-16T12:25:21",
+      "timestamp_raw": "5/16/2026, 12:25:21 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0014",
+      "source": "base44_activity_log_export",
+      "type": "app.integration.executed",
+      "user": "lufp005x@gmail.com",
+      "timestamp": "2026-05-16T12:25:13",
+      "timestamp_raw": "5/16/2026, 12:25:13 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0015",
+      "source": "base44_activity_log_export",
+      "type": "app.integration.executed",
+      "user": "lufp005x@gmail.com",
+      "timestamp": "2026-05-16T12:24:56",
+      "timestamp_raw": "5/16/2026, 12:24:56 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0016",
+      "source": "base44_activity_log_export",
+      "type": "app.integration.executed",
+      "user": "lufp005x@gmail.com",
+      "timestamp": "2026-05-16T12:24:52",
+      "timestamp_raw": "5/16/2026, 12:24:52 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0017",
+      "source": "base44_activity_log_export",
+      "type": "app.integration.executed",
+      "user": "lufp005x@gmail.com",
+      "timestamp": "2026-05-16T12:22:48",
+      "timestamp_raw": "5/16/2026, 12:22:48 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0018",
+      "source": "base44_activity_log_export",
+      "type": "app.integration.executed",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-16T09:32:57",
+      "timestamp_raw": "5/16/2026, 9:32:57 AM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0019",
+      "source": "base44_activity_log_export",
+      "type": "app.integration.executed",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:39:54",
+      "timestamp_raw": "5/12/2026, 4:39:54 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0020",
+      "source": "base44_activity_log_export",
+      "type": "app.integration.executed",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:39:53",
+      "timestamp_raw": "5/12/2026, 4:39:53 PM",
+      "details": {
+        "function_name": "SendEmail",
+        "credit_count": "2.0",
+        "duration_ms": "3",
+        "to": "sarah@example.com",
+        "subject": "Reminder: Your Photo Session on June 16",
+        "body": "\n      <h2>Hello Sarah Mitchell!</h2>\n      <p>This is a friendly reminder about your upcoming photo session.</p>\n      <br/>\n      <p><strong>Date:</strong> Tuesday, June 16, 2026 at 12:00 AM</p>\n      <p><strong>Session Type:</strong> wedding</p>\n      <p><strong>Location:</strong> Rosewood Gardens Estate</p>\n      <br/>\n      <h3>Tips to prepare:</h3>\n      <ul>\n        <li>Get a good night's rest before the session</li>\n        <li>Wear comfortable, coordinated outfits</li>\n        <li>Arrive 10 minutes early to settle in</li>\n        <li>Bring any props or accessories you'd like to include</li>\n      </ul>\n      <br/>\n      <p>Looking forward to creating beautiful images with you!</p>\n    "
+      },
+      "error": {
+        "code": 404,
+        "message": "Cannot send emails to users outside the app"
+      }
+    },
+    {
+      "event_id": "log_0021",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:38",
+      "timestamp_raw": "5/12/2026, 4:36:38 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0022",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:37",
+      "timestamp_raw": "5/12/2026, 4:36:37 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0023",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:35",
+      "timestamp_raw": "5/12/2026, 4:36:35 PM",
+      "details": {
+        "filter_fields": "id",
+        "sort": "",
+        "limit": "5000",
+        "skip": "",
+        "fields": "",
+        "entity_name": "Gallery"
+      },
+      "error": null
+    },
+    {
+      "event_id": "log_0024",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:34",
+      "timestamp_raw": "5/12/2026, 4:36:34 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0025",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:29",
+      "timestamp_raw": "5/12/2026, 4:36:29 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0026",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:28",
+      "timestamp_raw": "5/12/2026, 4:36:28 PM",
+      "details": {
+        "filter_fields": "id",
+        "sort": "",
+        "limit": "5000",
+        "skip": "",
+        "fields": "",
+        "entity_name": "Gallery"
+      },
+      "error": null
+    },
+    {
+      "event_id": "log_0027",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:26",
+      "timestamp_raw": "5/12/2026, 4:36:26 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0028",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:24",
+      "timestamp_raw": "5/12/2026, 4:36:24 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0029",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:10",
+      "timestamp_raw": "5/12/2026, 4:36:10 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0030",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:09",
+      "timestamp_raw": "5/12/2026, 4:36:09 PM",
+      "details": null,
+      "error": null
+    },
+    {
+      "event_id": "log_0031",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:07",
+      "timestamp_raw": "5/12/2026, 4:36:07 PM",
+      "details": {
+        "filter_fields": "id",
+        "sort": "",
+        "limit": "5000",
+        "skip": "",
+        "fields": "",
+        "entity_name": "Gallery"
+      },
+      "error": null
+    },
+    {
+      "event_id": "log_0032",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:36:06",
+      "timestamp_raw": "5/12/2026, 4:36:06 PM",
+      "details": {
+        "filter_fields": "id",
+        "sort": "",
+        "limit": "5000",
+        "skip": "",
+        "fields": "",
+        "entity_name": "Gallery"
+      },
+      "error": null
+    },
+    {
+      "event_id": "log_0033",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:33:50",
+      "timestamp_raw": "5/12/2026, 4:33:50 PM",
+      "details": {
+        "filter_fields": "id",
+        "sort": "",
+        "limit": "5000",
+        "skip": "",
+        "fields": "",
+        "entity_name": "Gallery"
+      },
+      "error": null
+    },
+    {
+      "event_id": "log_0034",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:33:48",
+      "timestamp_raw": "5/12/2026, 4:33:48 PM",
+      "details": {
+        "filter_fields": "id",
+        "sort": "",
+        "limit": "5000",
+        "skip": "",
+        "fields": "",
+        "entity_name": "Gallery"
+      },
+      "error": null
+    },
+    {
+      "event_id": "log_0035",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:33:48",
+      "timestamp_raw": "5/12/2026, 4:33:48 PM",
+      "details": {
+        "filter_fields": "id",
+        "sort": "",
+        "limit": "5000",
+        "skip": "",
+        "fields": "",
+        "entity_name": "Gallery"
+      },
+      "error": null
+    },
+    {
+      "event_id": "log_0036",
+      "source": "base44_activity_log_export",
+      "type": "app.entity.query",
+      "user": "techcorp2024@gmail.com",
+      "timestamp": "2026-05-12T16:33:46",
+      "timestamp_raw": "5/12/2026, 4:33:46 PM",
+      "details": {
+        "filter_fields": "id",
+        "sort": "",
+        "limit": "5000",
+        "skip": "",
+        "fields": "",
+        "entity_name": "Gallery"
+      },
+      "error": null
+    }
+  ]
+}
