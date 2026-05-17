@@ -1,1 +1,62 @@
-# Stub entity
+{
+  "name": "Contract",
+  "type": "object",
+  "properties": {
+    "booking_id": {
+      "type": "string",
+      "description": "Associated booking ID"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "service_contract",
+        "model_release",
+        "liability_waiver",
+        "print_release"
+      ],
+      "description": "Type of contract/waiver"
+    },
+    "client_name": {
+      "type": "string",
+      "description": "Client name"
+    },
+    "client_email": {
+      "type": "string",
+      "description": "Client email"
+    },
+    "content": {
+      "type": "string",
+      "description": "Contract text content"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "draft",
+        "sent",
+        "viewed",
+        "signed"
+      ],
+      "default": "draft",
+      "description": "Contract status"
+    },
+    "signature": {
+      "type": "string",
+      "description": "Client signature (typed name)"
+    },
+    "signed_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date contract was signed"
+    },
+    "ip_address": {
+      "type": "string",
+      "description": "IP address at time of signing"
+    }
+  },
+  "required": [
+    "booking_id",
+    "type",
+    "client_name",
+    "client_email"
+  ]
+}
