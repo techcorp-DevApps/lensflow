@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { bookingApi } from "@/api/bookingApi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Plus, Search, Calendar, MoreHorizontal, Pencil, Trash2, Link2 } from "lucide-react";
@@ -44,11 +45,11 @@ export default function Bookings() {
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list("-session_date"),
+    queryFn: () => bookingApi.list("-session_date"),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Booking.create(data),
+    mutationFn: (data) => bookingApi.create(data),
     onSuccess: async (created) => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       setShowForm(false);
@@ -81,7 +82,7 @@ export default function Bookings() {
   };
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
+    mutationFn: ({ id, data }) => bookingApi.update(id, data),
     onSuccess: async (_, { data }) => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       if (data.status === "confirmed" && editBooking?.status !== "confirmed") {
@@ -95,7 +96,7 @@ export default function Bookings() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Booking.delete(id),
+    mutationFn: (id) => bookingApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       toast({ title: "Booking deleted" });
@@ -106,7 +107,7 @@ export default function Bookings() {
     let token = booking.access_token;
     if (!token) {
       token = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-      await base44.entities.Booking.update(booking.id, { access_token: token });
+      await bookingApi.update(booking.id, { access_token: token });
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
     }
     const url = `${window.location.origin}/booking-status?token=${token}`;

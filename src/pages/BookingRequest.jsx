@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { bookingApi } from "@/api/bookingApi";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -56,7 +57,7 @@ export default function BookingRequest() {
 
     setSubmitting(true);
     const token = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-    const booking = await base44.entities.Booking.create({
+    const booking = await bookingApi.create({
       client_name: form.client_name.trim(),
       client_email: form.client_email.trim(),
       client_phone: form.client_phone.trim() || undefined,

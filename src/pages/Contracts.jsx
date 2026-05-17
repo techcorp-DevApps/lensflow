@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { bookingApi } from "@/api/bookingApi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Plus, FileText, Send, Eye, CheckCircle, Clock, Search } from "lucide-react";
@@ -40,7 +41,7 @@ export default function Contracts() {
 
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list(),
+    queryFn: () => bookingApi.list(),
   });
 
   const createMutation = useMutation({

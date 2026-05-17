@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { bookingApi } from "@/api/bookingApi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, differenceInDays, isAfter, startOfToday } from "date-fns";
 import { Bell, Send, Check, Clock, Mail, CalendarDays, MapPin, AlertCircle } from "lucide-react";
@@ -23,11 +24,11 @@ export default function Reminders() {
 
   const { data: bookings = [], isLoading } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list("-session_date"),
+    queryFn: () => bookingApi.list("-session_date"),
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
+    mutationFn: ({ id, data }) => bookingApi.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
   });
 

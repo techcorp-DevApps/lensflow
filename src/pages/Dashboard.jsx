@@ -1,5 +1,6 @@
 import React from "react";
 import { base44 } from "@/api/base44Client";
+import { bookingApi } from "@/api/bookingApi";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarDays, FileText, Image, DollarSign, Camera, MessageCircle } from "lucide-react";
 import { format, isAfter, startOfToday } from "date-fns";
@@ -13,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Dashboard() {
   const { data: bookings = [], isLoading: loadingBookings } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list("-session_date"),
+    queryFn: () => bookingApi.list("-session_date"),
   });
 
   const { data: contracts = [] } = useQuery({

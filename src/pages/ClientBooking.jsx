@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
+import { bookingApi } from "@/api/bookingApi";
 import { format } from "date-fns";
 import { Calendar, MapPin, Camera, Clock, FileText, CheckCircle2, DollarSign, AlertCircle, XCircle, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -35,7 +36,7 @@ export default function ClientBooking() {
   }, [token]);
 
   const loadData = async () => {
-    const results = await base44.entities.Booking.filter({ access_token: token });
+    const results = await bookingApi.filter({ access_token: token });
     if (!results || results.length === 0) {
       setError("Booking not found. Please check your link or contact your photographer.");
       setLoading(false);

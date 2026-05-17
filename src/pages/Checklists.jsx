@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { bookingApi } from "@/api/bookingApi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, CheckSquare, Camera, Package, MapPin, MessageSquare, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -56,7 +57,7 @@ export default function Checklists() {
 
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list(),
+    queryFn: () => bookingApi.list(),
   });
 
   const createTemplateMutation = useMutation({

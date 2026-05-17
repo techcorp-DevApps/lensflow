@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { bookingApi } from "@/api/bookingApi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Plus, Image, Lock, Eye, Archive, Upload, Trash2, ExternalLink, Copy, Check } from "lucide-react";
@@ -30,7 +31,7 @@ export default function Galleries() {
 
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list(),
+    queryFn: () => bookingApi.list(),
   });
 
   const createMutation = useMutation({
