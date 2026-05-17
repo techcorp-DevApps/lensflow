@@ -1,0 +1,33 @@
+{
+  "settings": {
+    "memory": {
+      "title": "Memory",
+      "feature": "Agent Memory",
+      "description": "Enable long-term memory so your agent can remember information across conversations",
+      "enabled": true,
+      "scope": {
+        "selected": "global_and_per_user",
+        "options": [
+          {
+            "id": "global_and_per_user",
+            "label": "Global & Per User",
+            "description": "Agent can save shared and personal memories",
+            "selected": true
+          },
+          {
+            "id": "global_only",
+            "label": "Global Only",
+            "description": "Memories shared across all users",
+            "selected": false
+          },
+          {
+            "id": "per_user_only",
+            "label": "Per User Only",
+            "description": "Memories specific to each user",
+            "selected": false
+          }
+        ]
+      }
+    }
+  }
+}
