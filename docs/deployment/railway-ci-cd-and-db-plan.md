@@ -95,7 +95,3 @@ Use an alternative only when measured requirements justify it:
 - Add smoke tests against deployed URL after production deployment.
 
 
-## Conflict Resolution Notes
-
-- Reconciled CI naming and gating by keeping a strict `quality` gate and preserving visibility with a dedicated non-blocking typecheck report job.
-- Preserved Railway project pinning and secrets contract while aligning workflow structure with latest PR expectations.
