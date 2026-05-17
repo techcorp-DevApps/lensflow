@@ -65,6 +65,8 @@ export default function BookingRequest() {
       location: form.location.trim() || undefined,
       notes: form.notes.trim() || undefined,
       status: "pending",
+      deposit_paid: false,
+      reminder_sent: false,
       access_token: token,
     });
 
