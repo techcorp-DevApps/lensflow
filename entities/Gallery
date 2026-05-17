@@ -1,1 +1,59 @@
-# Stub entity
+{
+  "name": "Gallery",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Gallery title"
+    },
+    "booking_id": {
+      "type": "string",
+      "description": "Associated booking ID"
+    },
+    "client_name": {
+      "type": "string",
+      "description": "Client name"
+    },
+    "client_email": {
+      "type": "string",
+      "description": "Client email"
+    },
+    "password": {
+      "type": "string",
+      "description": "Password to access the gallery"
+    },
+    "cover_image_url": {
+      "type": "string",
+      "description": "Cover image URL"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "preparing",
+        "published",
+        "archived"
+      ],
+      "default": "preparing",
+      "description": "Gallery status"
+    },
+    "selections_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether clients can select favorites"
+    },
+    "download_enabled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether clients can download images"
+    },
+    "expiry_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Gallery expiry date"
+    }
+  },
+  "required": [
+    "title",
+    "password"
+  ]
+}
