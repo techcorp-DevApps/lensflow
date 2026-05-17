@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
+import { galleriesApi } from "@/api/galleries";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Plus, Image, Lock, Eye, Archive, Upload, Trash2, ExternalLink, Copy, Check } from "lucide-react";
@@ -25,7 +26,7 @@ export default function Galleries() {
 
   const { data: galleries = [], isLoading } = useQuery({
     queryKey: ["galleries"],
-    queryFn: () => base44.entities.Gallery.list("-created_date"),
+    queryFn: () => galleriesApi.list("-created_date"),
   });
 
   const { data: bookings = [] } = useQuery({
@@ -34,7 +35,7 @@ export default function Galleries() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Gallery.create(data),
+    mutationFn: (data) => galleriesApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["galleries"] });
       setShowForm(false);
@@ -43,7 +44,7 @@ export default function Galleries() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Gallery.delete(id),
+    mutationFn: (id) => galleriesApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["galleries"] });
       toast({ title: "Gallery deleted" });

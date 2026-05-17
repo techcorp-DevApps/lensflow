@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { base44 } from "@/api/base44Client";
+import { galleriesApi } from "@/api/galleries";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Upload, Trash2, Image, Star, Copy, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,7 +21,7 @@ export default function GalleryDetail({ gallery, onClose, onDelete }) {
   });
 
   const updateGalleryMutation = useMutation({
-    mutationFn: (data) => base44.entities.Gallery.update(gallery.id, data),
+    mutationFn: (data) => galleriesApi.update(gallery.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["galleries"] });
       toast({ title: "Gallery updated" });
