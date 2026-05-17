@@ -5,7 +5,6 @@ buildEnvironment = "V3"
 [deploy]
 runtime = "V2"
 numReplicas = 1
-startCommand = "npm run start"
 healthcheckPath = "/"
 sleepApplication = false
 useLegacyStacker = false
