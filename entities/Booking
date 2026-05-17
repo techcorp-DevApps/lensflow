@@ -1,1 +1,127 @@
-# Stub entity
+{
+  "name": "Booking",
+  "type": "object",
+  "properties": {
+    "client_name": {
+      "type": "string",
+      "description": "Full name of the client"
+    },
+    "client_email": {
+      "type": "string",
+      "description": "Client email address"
+    },
+    "client_phone": {
+      "type": "string",
+      "description": "Client phone number"
+    },
+    "session_type": {
+      "type": "string",
+      "enum": [
+        "portrait",
+        "wedding",
+        "family",
+        "newborn",
+        "maternity",
+        "event",
+        "commercial",
+        "headshot"
+      ],
+      "description": "Type of photo session"
+    },
+    "session_date": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Date and time of the session"
+    },
+    "location": {
+      "type": "string",
+      "description": "Shoot location"
+    },
+    "notes": {
+      "type": "string",
+      "description": "Additional notes from client"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "confirmed",
+        "contract_sent",
+        "contract_signed",
+        "completed",
+        "cancelled"
+      ],
+      "default": "pending",
+      "description": "Booking status"
+    },
+    "price": {
+      "type": "number",
+      "description": "Session price"
+    },
+    "deposit_paid": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether deposit has been paid"
+    },
+    "reminder_sent": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whether pre-shoot reminder was sent"
+    },
+    "gallery_id": {
+      "type": "string",
+      "description": "Associated gallery ID"
+    },
+    "access_token": {
+      "type": "string",
+      "description": "Unique token for client portal access"
+    }
+  },
+  "required": [
+    "client_name",
+    "client_email",
+    "session_type",
+    "session_date"
+  ],
+  "rls": {
+    "create": {
+      "$or": [
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        },
+        {
+          "user_condition": {
+            "role": "user"
+          }
+        }
+      ]
+    },
+    "read": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "update": {
+      "$or": [
+        {
+          "created_by": "{{user.email}}"
+        },
+        {
+          "user_condition": {
+            "role": "admin"
+          }
+        }
+      ]
+    },
+    "delete": null
+  }
+}
