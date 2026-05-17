@@ -1,0 +1,3662 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "LuminaStudio API",
+    "description": "API documentation for the **LuminaStudio** application.\n\n**Authentication:** Most endpoints require the `api_key` header. If using Swagger UI, click the **Authorize** button at the top of the page and enter your API key before trying any endpoint.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://illuminatestudiosau.base44.app/api",
+      "description": "API server"
+    }
+  ],
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ],
+  "paths": {
+    "/entities/Booking": {
+      "get": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "List Booking records",
+        "operationId": "list_Booking",
+        "description": "Retrieve a list of Booking records with optional filtering, sorting, and pagination.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON query filter, e.g. {\"status\":\"active\"}"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip (pagination)"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field name to sort by. Prefix with '-' for descending order, e.g. -created_date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Booking"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "Create a Booking record",
+        "operationId": "create_Booking",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Booking"
+              },
+              "example": {
+                "client_name": "Example client_name",
+                "client_email": "Example client_email",
+                "session_type": "portrait",
+                "session_date": "Example session_date"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "Delete multiple Booking records",
+        "operationId": "delete_many_Booking",
+        "description": "**Warning:** Passing an empty `{}` query will delete ALL records in this entity.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Query filter to match records to delete"
+              },
+              "example": {
+                "client_name": "Example client_name"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "deleted": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Booking/bulk": {
+      "post": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "Bulk create Booking records",
+        "operationId": "bulk_create_Booking",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              },
+              "example": [
+                {
+                  "client_name": "Example client_name",
+                  "client_email": "Example client_email",
+                  "session_type": "portrait",
+                  "session_date": "Example session_date"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of created records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Booking"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "Bulk update Booking records",
+        "operationId": "bulk_update_Booking",
+        "description": "Each item must include an 'id' field along with the fields to update.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              },
+              "example": [
+                {
+                  "id": "<record_id>",
+                  "client_name": "Example client_name",
+                  "client_email": "Example client_email",
+                  "session_type": "portrait",
+                  "session_date": "Example session_date"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of updated records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Booking"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Booking/update-many": {
+      "patch": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "Update many Booking records by query",
+        "operationId": "update_many_Booking",
+        "description": "Update multiple records matching a query filter. Supports MongoDB update operators ($set, $inc, $push, $pull).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "query",
+                  "data"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "description": "Query filter to match records"
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Update operations to apply"
+                  }
+                }
+              },
+              "example": {
+                "query": {
+                  "client_name": "Example client_name"
+                },
+                "data": {
+                  "$set": {
+                    "client_name": "Example client_name"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "updated": {
+                      "type": "integer"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Booking/{Booking_id}": {
+      "get": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "Get a Booking record by ID",
+        "operationId": "get_Booking",
+        "parameters": [
+          {
+            "name": "Booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "Update a Booking record",
+        "operationId": "update_Booking",
+        "parameters": [
+          {
+            "name": "Booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Booking"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "Delete a Booking record",
+        "operationId": "delete_Booking",
+        "description": "Soft-deletes the record. Use the restore endpoint to undo.",
+        "parameters": [
+          {
+            "name": "Booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Booking/{Booking_id}/restore": {
+      "put": {
+        "tags": [
+          "Entities - Booking"
+        ],
+        "summary": "Restore a deleted Booking record",
+        "operationId": "restore_Booking",
+        "parameters": [
+          {
+            "name": "Booking_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restored record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Booking"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Contract": {
+      "get": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "List Contract records",
+        "operationId": "list_Contract",
+        "description": "Retrieve a list of Contract records with optional filtering, sorting, and pagination.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON query filter, e.g. {\"status\":\"active\"}"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip (pagination)"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field name to sort by. Prefix with '-' for descending order, e.g. -created_date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contract"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "Create a Contract record",
+        "operationId": "create_Contract",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Contract"
+              },
+              "example": {
+                "booking_id": "Example booking_id",
+                "type": "service_contract",
+                "client_name": "Example client_name",
+                "client_email": "Example client_email"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contract"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "Delete multiple Contract records",
+        "operationId": "delete_many_Contract",
+        "description": "**Warning:** Passing an empty `{}` query will delete ALL records in this entity.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Query filter to match records to delete"
+              },
+              "example": {
+                "booking_id": "Example booking_id"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "deleted": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Contract/bulk": {
+      "post": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "Bulk create Contract records",
+        "operationId": "bulk_create_Contract",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Contract"
+                }
+              },
+              "example": [
+                {
+                  "booking_id": "Example booking_id",
+                  "type": "service_contract",
+                  "client_name": "Example client_name",
+                  "client_email": "Example client_email"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of created records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contract"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "Bulk update Contract records",
+        "operationId": "bulk_update_Contract",
+        "description": "Each item must include an 'id' field along with the fields to update.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Contract"
+                }
+              },
+              "example": [
+                {
+                  "id": "<record_id>",
+                  "booking_id": "Example booking_id",
+                  "type": "service_contract",
+                  "client_name": "Example client_name",
+                  "client_email": "Example client_email"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of updated records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contract"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Contract/update-many": {
+      "patch": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "Update many Contract records by query",
+        "operationId": "update_many_Contract",
+        "description": "Update multiple records matching a query filter. Supports MongoDB update operators ($set, $inc, $push, $pull).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "query",
+                  "data"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "description": "Query filter to match records"
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Update operations to apply"
+                  }
+                }
+              },
+              "example": {
+                "query": {
+                  "booking_id": "Example booking_id"
+                },
+                "data": {
+                  "$set": {
+                    "booking_id": "Example booking_id"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "updated": {
+                      "type": "integer"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Contract/{Contract_id}": {
+      "get": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "Get a Contract record by ID",
+        "operationId": "get_Contract",
+        "parameters": [
+          {
+            "name": "Contract_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contract"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "Update a Contract record",
+        "operationId": "update_Contract",
+        "parameters": [
+          {
+            "name": "Contract_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Contract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contract"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "Delete a Contract record",
+        "operationId": "delete_Contract",
+        "description": "Soft-deletes the record. Use the restore endpoint to undo.",
+        "parameters": [
+          {
+            "name": "Contract_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Contract/{Contract_id}/restore": {
+      "put": {
+        "tags": [
+          "Entities - Contract"
+        ],
+        "summary": "Restore a deleted Contract record",
+        "operationId": "restore_Contract",
+        "parameters": [
+          {
+            "name": "Contract_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restored record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Contract"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Gallery": {
+      "get": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "List Gallery records",
+        "operationId": "list_Gallery",
+        "description": "Retrieve a list of Gallery records with optional filtering, sorting, and pagination.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON query filter, e.g. {\"status\":\"active\"}"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip (pagination)"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field name to sort by. Prefix with '-' for descending order, e.g. -created_date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Gallery"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "Create a Gallery record",
+        "operationId": "create_Gallery",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Gallery"
+              },
+              "example": {
+                "title": "Example title",
+                "password": "Example password"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gallery"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "Delete multiple Gallery records",
+        "operationId": "delete_many_Gallery",
+        "description": "**Warning:** Passing an empty `{}` query will delete ALL records in this entity.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Query filter to match records to delete"
+              },
+              "example": {
+                "title": "Example title"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "deleted": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Gallery/bulk": {
+      "post": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "Bulk create Gallery records",
+        "operationId": "bulk_create_Gallery",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Gallery"
+                }
+              },
+              "example": [
+                {
+                  "title": "Example title",
+                  "password": "Example password"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of created records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Gallery"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "Bulk update Gallery records",
+        "operationId": "bulk_update_Gallery",
+        "description": "Each item must include an 'id' field along with the fields to update.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/Gallery"
+                }
+              },
+              "example": [
+                {
+                  "id": "<record_id>",
+                  "title": "Example title",
+                  "password": "Example password"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of updated records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Gallery"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Gallery/update-many": {
+      "patch": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "Update many Gallery records by query",
+        "operationId": "update_many_Gallery",
+        "description": "Update multiple records matching a query filter. Supports MongoDB update operators ($set, $inc, $push, $pull).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "query",
+                  "data"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "description": "Query filter to match records"
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Update operations to apply"
+                  }
+                }
+              },
+              "example": {
+                "query": {
+                  "title": "Example title"
+                },
+                "data": {
+                  "$set": {
+                    "title": "Example title"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "updated": {
+                      "type": "integer"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Gallery/{Gallery_id}": {
+      "get": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "Get a Gallery record by ID",
+        "operationId": "get_Gallery",
+        "parameters": [
+          {
+            "name": "Gallery_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gallery"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "Update a Gallery record",
+        "operationId": "update_Gallery",
+        "parameters": [
+          {
+            "name": "Gallery_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Gallery"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gallery"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "Delete a Gallery record",
+        "operationId": "delete_Gallery",
+        "description": "Soft-deletes the record. Use the restore endpoint to undo.",
+        "parameters": [
+          {
+            "name": "Gallery_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/Gallery/{Gallery_id}/restore": {
+      "put": {
+        "tags": [
+          "Entities - Gallery"
+        ],
+        "summary": "Restore a deleted Gallery record",
+        "operationId": "restore_Gallery",
+        "parameters": [
+          {
+            "name": "Gallery_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restored record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Gallery"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/GalleryImage": {
+      "get": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "List GalleryImage records",
+        "operationId": "list_GalleryImage",
+        "description": "Retrieve a list of GalleryImage records with optional filtering, sorting, and pagination.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON query filter, e.g. {\"status\":\"active\"}"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip (pagination)"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field name to sort by. Prefix with '-' for descending order, e.g. -created_date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GalleryImage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "Create a GalleryImage record",
+        "operationId": "create_GalleryImage",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GalleryImage"
+              },
+              "example": {
+                "gallery_id": "Example gallery_id",
+                "image_url": "Example image_url"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GalleryImage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "Delete multiple GalleryImage records",
+        "operationId": "delete_many_GalleryImage",
+        "description": "**Warning:** Passing an empty `{}` query will delete ALL records in this entity.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Query filter to match records to delete"
+              },
+              "example": {
+                "gallery_id": "Example gallery_id"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "deleted": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/GalleryImage/bulk": {
+      "post": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "Bulk create GalleryImage records",
+        "operationId": "bulk_create_GalleryImage",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GalleryImage"
+                }
+              },
+              "example": [
+                {
+                  "gallery_id": "Example gallery_id",
+                  "image_url": "Example image_url"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of created records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GalleryImage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "Bulk update GalleryImage records",
+        "operationId": "bulk_update_GalleryImage",
+        "description": "Each item must include an 'id' field along with the fields to update.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/GalleryImage"
+                }
+              },
+              "example": [
+                {
+                  "id": "<record_id>",
+                  "gallery_id": "Example gallery_id",
+                  "image_url": "Example image_url"
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of updated records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GalleryImage"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/GalleryImage/update-many": {
+      "patch": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "Update many GalleryImage records by query",
+        "operationId": "update_many_GalleryImage",
+        "description": "Update multiple records matching a query filter. Supports MongoDB update operators ($set, $inc, $push, $pull).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "query",
+                  "data"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "description": "Query filter to match records"
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Update operations to apply"
+                  }
+                }
+              },
+              "example": {
+                "query": {
+                  "gallery_id": "Example gallery_id"
+                },
+                "data": {
+                  "$set": {
+                    "gallery_id": "Example gallery_id"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "updated": {
+                      "type": "integer"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/GalleryImage/{GalleryImage_id}": {
+      "get": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "Get a GalleryImage record by ID",
+        "operationId": "get_GalleryImage",
+        "parameters": [
+          {
+            "name": "GalleryImage_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GalleryImage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "Update a GalleryImage record",
+        "operationId": "update_GalleryImage",
+        "parameters": [
+          {
+            "name": "GalleryImage_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GalleryImage"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GalleryImage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "Delete a GalleryImage record",
+        "operationId": "delete_GalleryImage",
+        "description": "Soft-deletes the record. Use the restore endpoint to undo.",
+        "parameters": [
+          {
+            "name": "GalleryImage_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/GalleryImage/{GalleryImage_id}/restore": {
+      "put": {
+        "tags": [
+          "Entities - GalleryImage"
+        ],
+        "summary": "Restore a deleted GalleryImage record",
+        "operationId": "restore_GalleryImage",
+        "parameters": [
+          {
+            "name": "GalleryImage_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restored record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GalleryImage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ChecklistTemplate": {
+      "get": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "List ChecklistTemplate records",
+        "operationId": "list_ChecklistTemplate",
+        "description": "Retrieve a list of ChecklistTemplate records with optional filtering, sorting, and pagination.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON query filter, e.g. {\"status\":\"active\"}"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip (pagination)"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field name to sort by. Prefix with '-' for descending order, e.g. -created_date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChecklistTemplate"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "Create a ChecklistTemplate record",
+        "operationId": "create_ChecklistTemplate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChecklistTemplate"
+              },
+              "example": {
+                "session_type": "portrait",
+                "items": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistTemplate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "Delete multiple ChecklistTemplate records",
+        "operationId": "delete_many_ChecklistTemplate",
+        "description": "**Warning:** Passing an empty `{}` query will delete ALL records in this entity.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Query filter to match records to delete"
+              },
+              "example": {
+                "session_type": "portrait"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "deleted": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ChecklistTemplate/bulk": {
+      "post": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "Bulk create ChecklistTemplate records",
+        "operationId": "bulk_create_ChecklistTemplate",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ChecklistTemplate"
+                }
+              },
+              "example": [
+                {
+                  "session_type": "portrait",
+                  "items": []
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of created records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChecklistTemplate"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "Bulk update ChecklistTemplate records",
+        "operationId": "bulk_update_ChecklistTemplate",
+        "description": "Each item must include an 'id' field along with the fields to update.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ChecklistTemplate"
+                }
+              },
+              "example": [
+                {
+                  "id": "<record_id>",
+                  "session_type": "portrait",
+                  "items": []
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of updated records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChecklistTemplate"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ChecklistTemplate/update-many": {
+      "patch": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "Update many ChecklistTemplate records by query",
+        "operationId": "update_many_ChecklistTemplate",
+        "description": "Update multiple records matching a query filter. Supports MongoDB update operators ($set, $inc, $push, $pull).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "query",
+                  "data"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "description": "Query filter to match records"
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Update operations to apply"
+                  }
+                }
+              },
+              "example": {
+                "query": {
+                  "session_type": "portrait"
+                },
+                "data": {
+                  "$set": {
+                    "session_type": "portrait"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "updated": {
+                      "type": "integer"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ChecklistTemplate/{ChecklistTemplate_id}": {
+      "get": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "Get a ChecklistTemplate record by ID",
+        "operationId": "get_ChecklistTemplate",
+        "parameters": [
+          {
+            "name": "ChecklistTemplate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistTemplate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "Update a ChecklistTemplate record",
+        "operationId": "update_ChecklistTemplate",
+        "parameters": [
+          {
+            "name": "ChecklistTemplate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ChecklistTemplate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistTemplate"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "Delete a ChecklistTemplate record",
+        "operationId": "delete_ChecklistTemplate",
+        "description": "Soft-deletes the record. Use the restore endpoint to undo.",
+        "parameters": [
+          {
+            "name": "ChecklistTemplate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ChecklistTemplate/{ChecklistTemplate_id}/restore": {
+      "put": {
+        "tags": [
+          "Entities - ChecklistTemplate"
+        ],
+        "summary": "Restore a deleted ChecklistTemplate record",
+        "operationId": "restore_ChecklistTemplate",
+        "parameters": [
+          {
+            "name": "ChecklistTemplate_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restored record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChecklistTemplate"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ShootChecklist": {
+      "get": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "List ShootChecklist records",
+        "operationId": "list_ShootChecklist",
+        "description": "Retrieve a list of ShootChecklist records with optional filtering, sorting, and pagination.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON query filter, e.g. {\"status\":\"active\"}"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip (pagination)"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field name to sort by. Prefix with '-' for descending order, e.g. -created_date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShootChecklist"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "Create a ShootChecklist record",
+        "operationId": "create_ShootChecklist",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShootChecklist"
+              },
+              "example": {
+                "booking_id": "Example booking_id",
+                "items": []
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShootChecklist"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "Delete multiple ShootChecklist records",
+        "operationId": "delete_many_ShootChecklist",
+        "description": "**Warning:** Passing an empty `{}` query will delete ALL records in this entity.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "Query filter to match records to delete"
+              },
+              "example": {
+                "booking_id": "Example booking_id"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "deleted": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ShootChecklist/bulk": {
+      "post": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "Bulk create ShootChecklist records",
+        "operationId": "bulk_create_ShootChecklist",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ShootChecklist"
+                }
+              },
+              "example": [
+                {
+                  "booking_id": "Example booking_id",
+                  "items": []
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of created records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShootChecklist"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "Bulk update ShootChecklist records",
+        "operationId": "bulk_update_ShootChecklist",
+        "description": "Each item must include an 'id' field along with the fields to update.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ShootChecklist"
+                }
+              },
+              "example": [
+                {
+                  "id": "<record_id>",
+                  "booking_id": "Example booking_id",
+                  "items": []
+                }
+              ]
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "List of updated records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ShootChecklist"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ShootChecklist/update-many": {
+      "patch": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "Update many ShootChecklist records by query",
+        "operationId": "update_many_ShootChecklist",
+        "description": "Update multiple records matching a query filter. Supports MongoDB update operators ($set, $inc, $push, $pull).",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "query",
+                  "data"
+                ],
+                "properties": {
+                  "query": {
+                    "type": "object",
+                    "description": "Query filter to match records"
+                  },
+                  "data": {
+                    "type": "object",
+                    "description": "Update operations to apply"
+                  }
+                }
+              },
+              "example": {
+                "query": {
+                  "booking_id": "Example booking_id"
+                },
+                "data": {
+                  "$set": {
+                    "booking_id": "Example booking_id"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Update result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "updated": {
+                      "type": "integer"
+                    },
+                    "has_more": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ShootChecklist/{ShootChecklist_id}": {
+      "get": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "Get a ShootChecklist record by ID",
+        "operationId": "get_ShootChecklist",
+        "parameters": [
+          {
+            "name": "ShootChecklist_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShootChecklist"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "Update a ShootChecklist record",
+        "operationId": "update_ShootChecklist",
+        "parameters": [
+          {
+            "name": "ShootChecklist_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ShootChecklist"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShootChecklist"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "Delete a ShootChecklist record",
+        "operationId": "delete_ShootChecklist",
+        "description": "Soft-deletes the record. Use the restore endpoint to undo.",
+        "parameters": [
+          {
+            "name": "ShootChecklist_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/ShootChecklist/{ShootChecklist_id}/restore": {
+      "put": {
+        "tags": [
+          "Entities - ShootChecklist"
+        ],
+        "summary": "Restore a deleted ShootChecklist record",
+        "operationId": "restore_ShootChecklist",
+        "parameters": [
+          {
+            "name": "ShootChecklist_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restored record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ShootChecklist"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/User": {
+      "get": {
+        "tags": [
+          "Entities - User"
+        ],
+        "summary": "List User records",
+        "operationId": "list_User",
+        "description": "Retrieve a list of User records with optional filtering, sorting, and pagination.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "JSON query filter, e.g. {\"status\":\"active\"}"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of records to return"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of records to skip (pagination)"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field name to sort by. Prefix with '-' for descending order, e.g. -created_date"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of records",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/User"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Entities - User"
+        ],
+        "summary": "Create a User record",
+        "operationId": "create_User",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              },
+              "example": {
+                "email": "Example email",
+                "full_name": "Example full_name",
+                "role": "admin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/entities/User/{User_id}": {
+      "get": {
+        "tags": [
+          "Entities - User"
+        ],
+        "summary": "Get a User record by ID",
+        "operationId": "get_User",
+        "parameters": [
+          {
+            "name": "User_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Entities - User"
+        ],
+        "summary": "Update a User record",
+        "operationId": "update_User",
+        "parameters": [
+          {
+            "name": "User_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Entities - User"
+        ],
+        "summary": "Delete a User record",
+        "operationId": "delete_User",
+        "description": "Soft-deletes the record. Use the restore endpoint to undo.",
+        "parameters": [
+          {
+            "name": "User_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Record ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Deletion result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/6a0343792c6e5d2aceee9624/agents/conversations": {
+      "get": {
+        "tags": [
+          "App Agents"
+        ],
+        "summary": "List conversations",
+        "operationId": "list_agent_conversations",
+        "description": "List the authenticated user's agent conversations. Returns the most recent conversations first.",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of conversations to return"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            },
+            "description": "Number of conversations to skip (pagination)"
+          },
+          {
+            "name": "sort_by",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Field name to sort by. Prefix with '-' for descending order"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of conversations",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AgentConversation"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "App Agents"
+        ],
+        "summary": "Create a conversation",
+        "operationId": "create_agent_conversation",
+        "description": "Start a new conversation with an app agent. Available agent names: `booking_assistant`.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "agent_name"
+                ],
+                "properties": {
+                  "agent_name": {
+                    "type": "string",
+                    "description": "Name of the agent to start a conversation with",
+                    "enum": [
+                      "booking_assistant"
+                    ]
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "description": "Optional metadata to attach to the conversation",
+                    "default": {}
+                  }
+                }
+              },
+              "example": {
+                "agent_name": "booking_assistant"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Created conversation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentConversation"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/6a0343792c6e5d2aceee9624/agents/conversations/{conversation_id}": {
+      "get": {
+        "tags": [
+          "App Agents"
+        ],
+        "summary": "Get a conversation",
+        "operationId": "get_agent_conversation",
+        "description": "Retrieve a specific conversation by ID, including all messages.",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Conversation ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The conversation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentConversation"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/apps/6a0343792c6e5d2aceee9624/agents/conversations/{conversation_id}/messages": {
+      "post": {
+        "tags": [
+          "App Agents"
+        ],
+        "summary": "Send a message",
+        "operationId": "send_agent_message",
+        "description": "Send a message to an existing agent conversation and receive the agent's response. The agent processes the message and returns its reply.",
+        "parameters": [
+          {
+            "name": "conversation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Conversation ID"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "content"
+                ],
+                "properties": {
+                  "content": {
+                    "type": "string",
+                    "description": "The message text to send to the agent"
+                  },
+                  "role": {
+                    "type": "string",
+                    "enum": [
+                      "user"
+                    ],
+                    "default": "user",
+                    "description": "Message role"
+                  }
+                }
+              },
+              "example": {
+                "role": "user",
+                "content": "Hello, how can you help me?"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Agent response message",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentMessage"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "api_key",
+        "description": "Your API key. Obtain it from your user profile or via `User.me()` in the app SDK."
+      }
+    },
+    "schemas": {
+      "Booking": {
+        "type": "object",
+        "properties": {
+          "client_name": {
+            "type": "string",
+            "description": "Full name of the client"
+          },
+          "client_email": {
+            "type": "string",
+            "description": "Client email address"
+          },
+          "client_phone": {
+            "type": "string",
+            "description": "Client phone number"
+          },
+          "session_type": {
+            "type": "string",
+            "enum": [
+              "portrait",
+              "wedding",
+              "family",
+              "newborn",
+              "maternity",
+              "event",
+              "commercial",
+              "headshot"
+            ],
+            "description": "Type of photo session"
+          },
+          "session_date": {
+            "type": "string",
+            "description": "Date and time of the session",
+            "format": "date-time"
+          },
+          "location": {
+            "type": "string",
+            "description": "Shoot location"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes from client"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "confirmed",
+              "contract_sent",
+              "contract_signed",
+              "completed",
+              "cancelled"
+            ],
+            "description": "Booking status",
+            "default": "pending"
+          },
+          "price": {
+            "type": "number",
+            "description": "Session price"
+          },
+          "deposit_paid": {
+            "type": "boolean",
+            "description": "Whether deposit has been paid",
+            "default": false
+          },
+          "reminder_sent": {
+            "type": "boolean",
+            "description": "Whether pre-shoot reminder was sent",
+            "default": false
+          },
+          "gallery_id": {
+            "type": "string",
+            "description": "Associated gallery ID"
+          },
+          "access_token": {
+            "type": "string",
+            "description": "Unique token for client portal access"
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique record identifier"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record creation timestamp"
+          },
+          "updated_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record last update timestamp"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Email of the user who created the record"
+          }
+        },
+        "required": [
+          "client_name",
+          "client_email",
+          "session_type",
+          "session_date"
+        ],
+        "description": "Booking entity"
+      },
+      "Contract": {
+        "type": "object",
+        "properties": {
+          "booking_id": {
+            "type": "string",
+            "description": "Associated booking ID"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "service_contract",
+              "model_release",
+              "liability_waiver",
+              "print_release"
+            ],
+            "description": "Type of contract/waiver"
+          },
+          "client_name": {
+            "type": "string",
+            "description": "Client name"
+          },
+          "client_email": {
+            "type": "string",
+            "description": "Client email"
+          },
+          "content": {
+            "type": "string",
+            "description": "Contract text content"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft",
+              "sent",
+              "viewed",
+              "signed"
+            ],
+            "description": "Contract status",
+            "default": "draft"
+          },
+          "signature": {
+            "type": "string",
+            "description": "Client signature (typed name)"
+          },
+          "signed_date": {
+            "type": "string",
+            "description": "Date contract was signed",
+            "format": "date-time"
+          },
+          "ip_address": {
+            "type": "string",
+            "description": "IP address at time of signing"
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique record identifier"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record creation timestamp"
+          },
+          "updated_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record last update timestamp"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Email of the user who created the record"
+          }
+        },
+        "required": [
+          "booking_id",
+          "type",
+          "client_name",
+          "client_email"
+        ],
+        "description": "Contract entity"
+      },
+      "Gallery": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Gallery title"
+          },
+          "booking_id": {
+            "type": "string",
+            "description": "Associated booking ID"
+          },
+          "client_name": {
+            "type": "string",
+            "description": "Client name"
+          },
+          "client_email": {
+            "type": "string",
+            "description": "Client email"
+          },
+          "password": {
+            "type": "string",
+            "description": "Password to access the gallery"
+          },
+          "cover_image_url": {
+            "type": "string",
+            "description": "Cover image URL"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "preparing",
+              "published",
+              "archived"
+            ],
+            "description": "Gallery status",
+            "default": "preparing"
+          },
+          "selections_enabled": {
+            "type": "boolean",
+            "description": "Whether clients can select favorites",
+            "default": true
+          },
+          "download_enabled": {
+            "type": "boolean",
+            "description": "Whether clients can download images",
+            "default": false
+          },
+          "expiry_date": {
+            "type": "string",
+            "description": "Gallery expiry date",
+            "format": "date"
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique record identifier"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record creation timestamp"
+          },
+          "updated_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record last update timestamp"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Email of the user who created the record"
+          }
+        },
+        "required": [
+          "title",
+          "password"
+        ],
+        "description": "Gallery entity"
+      },
+      "GalleryImage": {
+        "type": "object",
+        "properties": {
+          "gallery_id": {
+            "type": "string",
+            "description": "Associated gallery ID"
+          },
+          "image_url": {
+            "type": "string",
+            "description": "Image file URL"
+          },
+          "thumbnail_url": {
+            "type": "string",
+            "description": "Thumbnail URL"
+          },
+          "filename": {
+            "type": "string",
+            "description": "Original filename"
+          },
+          "selected": {
+            "type": "boolean",
+            "description": "Whether client selected this image",
+            "default": false
+          },
+          "order": {
+            "type": "number",
+            "description": "Display order",
+            "default": 0
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique record identifier"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record creation timestamp"
+          },
+          "updated_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record last update timestamp"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Email of the user who created the record"
+          }
+        },
+        "required": [
+          "gallery_id",
+          "image_url"
+        ],
+        "description": "GalleryImage entity"
+      },
+      "ChecklistTemplate": {
+        "type": "object",
+        "properties": {
+          "session_type": {
+            "type": "string",
+            "enum": [
+              "portrait",
+              "wedding",
+              "family",
+              "newborn",
+              "maternity",
+              "event",
+              "commercial",
+              "headshot"
+            ],
+            "description": "Session type this checklist applies to"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "gear",
+                    "preparation",
+                    "location",
+                    "client_communication",
+                    "post_shoot"
+                  ]
+                }
+              }
+            },
+            "description": "Checklist items"
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique record identifier"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record creation timestamp"
+          },
+          "updated_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record last update timestamp"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Email of the user who created the record"
+          }
+        },
+        "required": [
+          "session_type",
+          "items"
+        ],
+        "description": "ChecklistTemplate entity"
+      },
+      "ShootChecklist": {
+        "type": "object",
+        "properties": {
+          "booking_id": {
+            "type": "string",
+            "description": "Associated booking ID"
+          },
+          "session_type": {
+            "type": "string",
+            "description": "Session type"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "completed": {
+                  "type": "boolean"
+                }
+              }
+            },
+            "description": "Checklist items with completion status"
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique record identifier"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record creation timestamp"
+          },
+          "updated_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record last update timestamp"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Email of the user who created the record"
+          }
+        },
+        "required": [
+          "booking_id",
+          "items"
+        ],
+        "description": "ShootChecklist entity"
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The email of the user"
+          },
+          "full_name": {
+            "type": "string",
+            "description": "The full name of the user"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "user"
+            ],
+            "description": "The role of the user in the app"
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique record identifier"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record creation timestamp"
+          },
+          "updated_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Record last update timestamp"
+          },
+          "created_by": {
+            "type": "string",
+            "description": "Email of the user who created the record"
+          }
+        },
+        "required": [
+          "full_name",
+          "role",
+          "email"
+        ],
+        "description": "User entity"
+      },
+      "AgentConversation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique conversation identifier"
+          },
+          "agent_name": {
+            "type": "string",
+            "description": "Name of the agent"
+          },
+          "created_by_id": {
+            "type": "string",
+            "description": "ID of the user who created the conversation"
+          },
+          "messages": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string",
+                  "enum": [
+                    "user",
+                    "assistant"
+                  ]
+                },
+                "content": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "List of messages in the conversation"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Custom metadata attached to the conversation"
+          },
+          "created_date": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_date": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "description": "An agent conversation with its messages"
+      },
+      "AgentMessage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique message identifier"
+          },
+          "role": {
+            "type": "string",
+            "enum": [
+              "user",
+              "assistant"
+            ],
+            "description": "Message role"
+          },
+          "content": {
+            "type": "string",
+            "description": "The message text content"
+          },
+          "tool_calls": {
+            "type": "array",
+            "nullable": true,
+            "description": "List of tool calls made by the agent during this response",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Tool name"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "running",
+                    "success",
+                    "error",
+                    "stopped"
+                  ]
+                },
+                "results": {
+                  "description": "Tool execution results"
+                }
+              }
+            }
+          },
+          "usage": {
+            "type": "object",
+            "nullable": true,
+            "description": "Token usage metrics for this message",
+            "properties": {
+              "prompt_tokens": {
+                "type": "integer"
+              },
+              "completion_tokens": {
+                "type": "integer"
+              },
+              "credits_charged": {
+                "type": "number",
+                "nullable": true
+              }
+            }
+          },
+          "additional_message_params": {
+            "type": "object",
+            "description": "Extra metadata including timing info, tool iteration count, and bottleneck details"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Message metadata including created_date and created_by_email"
+          }
+        },
+        "description": "A message in an agent conversation, including the agent's response with tool calls and usage metrics"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Entities - Booking",
+      "description": "CRUD operations for Booking records"
+    },
+    {
+      "name": "Entities - Contract",
+      "description": "CRUD operations for Contract records"
+    },
+    {
+      "name": "Entities - Gallery",
+      "description": "CRUD operations for Gallery records"
+    },
+    {
+      "name": "Entities - GalleryImage",
+      "description": "CRUD operations for GalleryImage records"
+    },
+    {
+      "name": "Entities - ChecklistTemplate",
+      "description": "CRUD operations for ChecklistTemplate records"
+    },
+    {
+      "name": "Entities - ShootChecklist",
+      "description": "CRUD operations for ShootChecklist records"
+    },
+    {
+      "name": "Entities - User",
+      "description": "CRUD operations for User records"
+    },
+    {
+      "name": "App Agents",
+      "description": "Interact with app agents via conversations"
+    }
+  ]
+}
