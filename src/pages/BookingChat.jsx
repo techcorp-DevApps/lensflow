@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Send, Camera, Loader2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
+import { hasOpenAIProjectConfig, openAIConfig } from "@/lib/openai-config";
 
 function MessageBubble({ message }) {
   const isUser = message.role === "user";
@@ -64,9 +65,21 @@ export default function BookingChat() {
     setIsStarting(true);
     const conv = await base44.agents.createConversation({
       agent_name: "booking_assistant",
-      metadata: { name: "New Booking Inquiry" },
+      metadata: {
+        name: "New Booking Inquiry",
+        integration: {
+          provider: "openai",
+          project_name: openAIConfig.projectName,
+          project_id: openAIConfig.projectId,
+          api_key: openAIConfig.apiKey || undefined
+        }
+      },
     });
     setConversation(conv);
+
+    if (!hasOpenAIProjectConfig) {
+      console.warn("OpenAI project settings are missing. Configure VITE_OPENAI_PROJECT_NAME and VITE_OPENAI_PROJECT_ID.");
+    }
 
     const unsubscribe = base44.agents.subscribeToConversation(conv.id, (data) => {
       setMessages(data.messages || []);
