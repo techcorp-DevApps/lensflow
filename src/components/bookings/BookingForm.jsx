@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { X } from "lucide-react";
 
 const SESSION_TYPES = [
@@ -28,6 +29,10 @@ export default function BookingForm({ booking, onSubmit, onCancel, isSubmitting 
     notes: booking?.notes || "",
     price: booking?.price || "",
     status: booking?.status || "pending",
+    deposit_paid: booking?.deposit_paid ?? false,
+    reminder_sent: booking?.reminder_sent ?? false,
+    gallery_id: booking?.gallery_id || "",
+    access_token: booking?.access_token || "",
   });
 
   const handleSubmit = (e) => {
@@ -35,6 +40,11 @@ export default function BookingForm({ booking, onSubmit, onCancel, isSubmitting 
     onSubmit({
       ...form,
       price: form.price ? Number(form.price) : undefined,
+      client_phone: form.client_phone || undefined,
+      location: form.location || undefined,
+      notes: form.notes || undefined,
+      gallery_id: form.gallery_id || undefined,
+      access_token: form.access_token || undefined,
       session_date: new Date(form.session_date).toISOString(),
     });
   };
@@ -86,6 +96,14 @@ export default function BookingForm({ booking, onSubmit, onCancel, isSubmitting 
           <Label>Price ($)</Label>
           <Input type="number" value={form.price} onChange={e => update("price", e.target.value)} placeholder="500" />
         </div>
+        <div className="space-y-2">
+          <Label>Gallery ID</Label>
+          <Input value={form.gallery_id} onChange={e => update("gallery_id", e.target.value)} placeholder="Optional linked gallery" />
+        </div>
+        <div className="space-y-2">
+          <Label>Access Token</Label>
+          <Input value={form.access_token} onChange={e => update("access_token", e.target.value)} placeholder="Optional client portal token" />
+        </div>
         {booking && (
           <div className="space-y-2">
             <Label>Status</Label>
@@ -102,6 +120,17 @@ export default function BookingForm({ booking, onSubmit, onCancel, isSubmitting 
             </Select>
           </div>
         )}
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="flex items-center space-x-2">
+          <Checkbox id="deposit_paid" checked={form.deposit_paid} onCheckedChange={v => update("deposit_paid", Boolean(v))} />
+          <Label htmlFor="deposit_paid">Deposit paid</Label>
+        </div>
+        <div className="flex items-center space-x-2">
+          <Checkbox id="reminder_sent" checked={form.reminder_sent} onCheckedChange={v => update("reminder_sent", Boolean(v))} />
+          <Label htmlFor="reminder_sent">Reminder sent</Label>
+        </div>
       </div>
 
       <div className="space-y-2">
