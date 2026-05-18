@@ -29,3 +29,10 @@ dist-ssr
 
 .env
 .vite
+
+# Test/CI artifacts
+/playwright-report
+/test-results
+/coverage
+/uploads/*
+!/uploads/.gitkeep
