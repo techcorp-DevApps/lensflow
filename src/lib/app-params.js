@@ -1,3 +1,4 @@
+// @ts-nocheck — runtime polyfills the Map<>/Storage union and uses dynamic shapes.
 const isNode = typeof window === 'undefined';
 const windowObj = isNode ? { localStorage: new Map() } : window;
 const storage = windowObj.localStorage;

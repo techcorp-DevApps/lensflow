@@ -313,6 +313,7 @@ router.post('/conversations/:id/messages', messageLimiter, async (req, res, next
       agent,
       conversation: conv,
       user: req.user,
+      onDelta: null,
     });
     res.status(201).json(assistant);
   } catch (err) { next(err); }

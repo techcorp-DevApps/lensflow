@@ -13,7 +13,14 @@
     "preview": "vite preview",
     "start": "node server/server.js",
     "start:prod": "npm run build && SERVE_SPA=true NODE_ENV=production node server/server.js",
-    "test": "node --test server/__tests__"
+    "test": "vitest run",
+    "test:unit": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "node e2e/smoke.mjs",
+    "test:e2e:smoke": "node e2e/smoke.mjs",
+    "test:e2e:ci": "playwright test",
+    "test:e2e:install": "playwright install --with-deps chromium"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1048.0",
@@ -94,10 +101,24 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
+    "@playwright/test": "^1.60.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/bcrypt": "^6.0.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/multer": "^2.1.0",
     "@types/node": "^22.13.5",
+    "@types/nodemailer": "^8.0.0",
+    "@types/pg": "^8.20.0",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/supertest": "^7.2.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "@vitest/coverage-v8": "^4.1.6",
     "autoprefixer": "^10.4.20",
     "baseline-browser-mapping": "^2.8.32",
     "eslint": "^9.19.0",
@@ -106,10 +127,13 @@
     "eslint-plugin-react-refresh": "^0.4.18",
     "eslint-plugin-unused-imports": "^4.3.0",
     "globals": "^15.14.0",
+    "jsdom": "^29.1.1",
+    "pg-mem": "^3.0.14",
     "postcss": "^8.5.3",
     "supertest": "^7.2.2",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.8.2",
-    "vite": "^6.1.0"
+    "vite": "^6.1.0",
+    "vitest": "^4.1.6"
   }
 }

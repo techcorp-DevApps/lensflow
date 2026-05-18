@@ -34,6 +34,7 @@ const request = async (path = "", options = {}) => {
   return response.text();
 };
 
+/** @param {{ q?: any, limit?: number, skip?: number, sort_by?: string }} [opts] */
 const buildQuery = ({ q, limit, skip, sort_by } = {}) => {
   const params = new URLSearchParams();
   if (q) params.set("q", typeof q === "string" ? q : JSON.stringify(q));

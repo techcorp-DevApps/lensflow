@@ -1,3 +1,4 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
@@ -39,7 +40,7 @@ export default function ClientGallery() {
   });
 
   const toggleSelectMutation = useMutation({
-    mutationFn: ({ id, selected }) => base44.entities.GalleryImage.update(id, { selected }),
+    mutationFn: (/** @type {{ id: string, selected: boolean }} */ { id, selected }) => base44.entities.GalleryImage.update(id, { selected }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["public-gallery-images", galleryId] }),
   });
 

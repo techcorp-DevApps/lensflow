@@ -8,6 +8,8 @@ const CONTRACT_STATUS = ['draft', 'sent', 'viewed', 'signed'];
 const GALLERY_STATUS = ['preparing', 'published', 'archived'];
 
 const optionalNullable = (s) => s.optional().nullable();
+/** @type {<T extends string>(arr: readonly T[]) => [T, ...T[]]} */
+const tup = (arr) => /** @type {[any, ...any[]]} */ ([...arr]);
 
 // Bookings: public create (booking request form) + public list/get by access_token
 export const bookingsRouter = createEntityRouter({
@@ -29,11 +31,11 @@ export const bookingsRouter = createEntityRouter({
     client_name: z.string().min(1),
     client_email: z.string().email(),
     client_phone: optionalNullable(z.string()),
-    session_type: z.enum(SESSION_TYPES),
+    session_type: z.enum(tup(SESSION_TYPES)),
     session_date: z.string(),
     location: optionalNullable(z.string()),
     notes: optionalNullable(z.string()),
-    status: z.enum(BOOKING_STATUS).optional(),
+    status: z.enum(tup(BOOKING_STATUS)).optional(),
     price: optionalNullable(z.number()),
     deposit_paid: z.boolean().optional(),
     reminder_sent: z.boolean().optional(),
@@ -59,11 +61,11 @@ export const contractsRouter = createEntityRouter({
   publicWritable: ['signature', 'signed_date', 'status'],
   schema: z.object({
     booking_id: z.string().min(1),
-    type: z.enum(CONTRACT_TYPES),
+    type: z.enum(tup(CONTRACT_TYPES)),
     client_name: z.string().min(1),
     client_email: z.string().email(),
     content: optionalNullable(z.string()),
-    status: z.enum(CONTRACT_STATUS).optional(),
+    status: z.enum(tup(CONTRACT_STATUS)).optional(),
     signature: optionalNullable(z.string()),
     signed_date: optionalNullable(z.string()),
     ip_address: optionalNullable(z.string()),
@@ -91,7 +93,7 @@ export const galleriesRouter = createEntityRouter({
     client_email: optionalNullable(z.string()),
     password: z.string().min(1),
     cover_image_url: optionalNullable(z.string()),
-    status: z.enum(GALLERY_STATUS).optional(),
+    status: z.enum(tup(GALLERY_STATUS)).optional(),
     selections_enabled: z.boolean().optional(),
     download_enabled: z.boolean().optional(),
     expiry_date: optionalNullable(z.string()),
@@ -127,7 +129,7 @@ export const checklistTemplatesRouter = createEntityRouter({
   writable: ['session_type', 'items'],
   jsonbColumns: ['items'],
   schema: z.object({
-    session_type: z.enum(SESSION_TYPES),
+    session_type: z.enum(tup(SESSION_TYPES)),
     items: z.array(z.object({
       text: z.string(),
       category: z.string().optional(),

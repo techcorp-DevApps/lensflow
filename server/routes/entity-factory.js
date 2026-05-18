@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { z } from 'zod';
+
 import { query } from '../db.js';
 import { requireAuth } from '../middleware/auth.js';
 import { HttpError } from '../middleware/error.js';
@@ -112,8 +112,8 @@ export const createEntityRouter = (config) => {
         if (!hasRestriction) return res.status(401).json({ error: 'Unauthorized' });
       }
       const sortBy = typeof req.query.sort_by === 'string' ? req.query.sort_by : null;
-      const limit = Math.min(parseInt(req.query.limit, 10) || 500, 1000);
-      const skip = Math.max(parseInt(req.query.skip, 10) || 0, 0);
+      const limit = Math.min(parseInt(String(req.query.limit ?? ''), 10) || 500, 1000);
+      const skip = Math.max(parseInt(String(req.query.skip ?? ''), 10) || 0, 0);
       const { where, values, nextIdx } = buildWhere(table, columns, filter);
       const sort = buildSort(sortBy, columns);
       const sql = `SELECT * FROM ${table} WHERE ${where} ORDER BY ${sort} LIMIT $${nextIdx} OFFSET $${nextIdx + 1}`;

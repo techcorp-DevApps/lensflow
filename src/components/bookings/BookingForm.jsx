@@ -18,7 +18,7 @@ const SESSION_TYPES = [
   { value: "headshot", label: "Headshot" },
 ];
 
-export default function BookingForm({ booking, onSubmit, onCancel, isSubmitting }) {
+export default function BookingForm({ booking = null, onSubmit, onCancel, isSubmitting }) {
   const [form, setForm] = useState({
     client_name: booking?.client_name || "",
     client_email: booking?.client_email || "",

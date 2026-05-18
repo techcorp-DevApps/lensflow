@@ -4,6 +4,10 @@ const { Pool } = pg;
 
 let pool = null;
 
+export const setPool = (customPool) => {
+  pool = customPool;
+};
+
 export const getPool = () => {
   if (pool) return pool;
   const connectionString = process.env.DATABASE_URL;
@@ -18,13 +22,13 @@ export const getPool = () => {
   return pool;
 };
 
-export const hasDatabase = () => Boolean(process.env.DATABASE_URL);
+export const hasDatabase = () => Boolean(process.env.DATABASE_URL) || Boolean(pool);
 
 export const query = (text, params) => getPool().query(text, params);
 
 export const closePool = async () => {
   if (pool) {
-    await pool.end();
+    if (typeof pool.end === 'function') await pool.end();
     pool = null;
   }
 };

@@ -1,3 +1,4 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -61,7 +62,7 @@ export default function Checklists() {
   });
 
   const createTemplateMutation = useMutation({
-    mutationFn: (data) => base44.entities.ChecklistTemplate.create(data),
+    mutationFn: (/** @type {any} */ data) => base44.entities.ChecklistTemplate.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checklist-templates"] });
       setShowEditor(false);
@@ -70,7 +71,7 @@ export default function Checklists() {
   });
 
   const updateTemplateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.ChecklistTemplate.update(id, data),
+    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => base44.entities.ChecklistTemplate.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checklist-templates"] });
       setShowEditor(false);

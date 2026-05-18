@@ -2,7 +2,7 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import { useNavigate, useLocation } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 
-const AuthContext = createContext();
+const AuthContext = createContext(/** @type {any} */ (null));
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);

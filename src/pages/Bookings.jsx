@@ -1,3 +1,4 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -49,7 +50,7 @@ export default function Bookings() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Booking.create(data),
+    mutationFn: (/** @type {any} */ data) => base44.entities.Booking.create(data),
     onSuccess: async (created) => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       setShowForm(false);
@@ -82,7 +83,7 @@ export default function Bookings() {
   };
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
+    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => base44.entities.Booking.update(id, data),
     onSuccess: async (_, { data }) => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       if (data.status === "confirmed" && editBooking?.status !== "confirmed") {
@@ -96,7 +97,7 @@ export default function Bookings() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Booking.delete(id),
+    mutationFn: (/** @type {string} */ id) => base44.entities.Booking.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       toast({ title: "Booking deleted" });

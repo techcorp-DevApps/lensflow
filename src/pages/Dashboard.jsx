@@ -1,3 +1,4 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React from "react";
 import { base44 } from "@/api/base44Client";
 import { galleriesApi } from "@/api/galleries";
@@ -33,7 +34,7 @@ export default function Dashboard() {
   const today = startOfToday();
   const upcoming = bookings
     .filter(b => b.status !== "cancelled" && b.status !== "completed" && isAfter(new Date(b.session_date), today))
-    .sort((a, b) => new Date(a.session_date) - new Date(b.session_date))
+    .sort((a, b) => new Date(a.session_date).getTime() - new Date(b.session_date).getTime())
     .slice(0, 5);
 
   const pendingContracts = contracts.filter(c => c.status !== "signed").length;

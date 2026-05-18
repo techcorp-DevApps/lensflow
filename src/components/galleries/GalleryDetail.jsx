@@ -20,7 +20,7 @@ export default function GalleryDetail({ gallery, onClose, onDelete }) {
   });
 
   const updateGalleryMutation = useMutation({
-    mutationFn: (data) => galleriesApi.update(gallery.id, data),
+    mutationFn: (/** @type {any} */ data) => galleriesApi.update(gallery.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["galleries"] });
       toast({ title: "Gallery updated" });
@@ -28,7 +28,7 @@ export default function GalleryDetail({ gallery, onClose, onDelete }) {
   });
 
   const deleteImageMutation = useMutation({
-    mutationFn: (id) => base44.entities.GalleryImage.delete(id),
+    mutationFn: (/** @type {string} */ id) => base44.entities.GalleryImage.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["gallery-images", gallery.id] }),
   });
 

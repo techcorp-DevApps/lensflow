@@ -1,3 +1,4 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { contractsApi } from "@/api/contracts";
@@ -46,7 +47,7 @@ export default function Contracts() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => contractsApi.create(data),
+    mutationFn: (/** @type {any} */ data) => contractsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contracts"] });
       setShowForm(false);
@@ -55,7 +56,7 @@ export default function Contracts() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => contractsApi.update(id, data),
+    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => contractsApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contracts"] });
       toast({ title: "Contract updated" });

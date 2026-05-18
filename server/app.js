@@ -86,7 +86,7 @@ export const createApp = () => {
     || (process.env.NODE_ENV === 'production' && fs.existsSync(distDir));
   if (serveSpa && fs.existsSync(distDir)) {
     app.use(express.static(distDir));
-    app.get(/^\/(?!api\/|health$|uploads\/).*/, (_req, res) => {
+    app.get(/^\/(?!api\/|health$|uploads\/|__test__\/).*/, (_req, res) => {
       res.sendFile(path.join(distDir, 'index.html'));
     });
   }

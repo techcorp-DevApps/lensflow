@@ -1,3 +1,4 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { Input } from "@/components/ui/input";
@@ -31,7 +32,7 @@ export default function BookingRequest() {
   const [form, setForm] = useState(EMPTY_FORM);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState(/** @type {Record<string, any>} */ ({}));
   const [submitError, setSubmitError] = useState(null);
 
   const update = (field, value) => {
@@ -237,7 +238,7 @@ export default function BookingRequest() {
   );
 }
 
-function Section({ title, children, required, error }) {
+function Section({ title, children, required = false, error = null }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2">
@@ -249,7 +250,7 @@ function Section({ title, children, required, error }) {
   );
 }
 
-function Field({ label, required, error, children }) {
+function Field({ label, required = false, error = null, children }) {
   return (
     <div className="space-y-1.5">
       <Label className="text-sm font-medium">

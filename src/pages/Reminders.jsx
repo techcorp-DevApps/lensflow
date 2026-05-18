@@ -1,3 +1,4 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -28,14 +29,14 @@ export default function Reminders() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
+    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => base44.entities.Booking.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
   });
 
   const today = startOfToday();
   const upcoming = bookings
     .filter(b => b.status !== "cancelled" && b.status !== "completed" && isAfter(new Date(b.session_date), today))
-    .sort((a, b) => new Date(a.session_date) - new Date(b.session_date));
+    .sort((a, b) => new Date(a.session_date).getTime() - new Date(b.session_date).getTime());
 
   const sendReminder = async (booking, message) => {
     const sessionDate = format(new Date(booking.session_date), "EEEE, MMMM d, yyyy 'at' h:mm a");
