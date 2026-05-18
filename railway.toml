@@ -5,7 +5,8 @@ buildEnvironment = "V3"
 [deploy]
 runtime = "V2"
 numReplicas = 1
-healthcheckPath = "/"
+healthcheckPath = "/health"
+startCommand = "npm run start:prod"
 sleepApplication = false
 useLegacyStacker = false
 ipv6EgressEnabled = true
