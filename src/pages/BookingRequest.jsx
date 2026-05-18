@@ -32,6 +32,7 @@ export default function BookingRequest() {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+  const [submitError, setSubmitError] = useState(null);
 
   const update = (field, value) => {
     setForm(prev => ({ ...prev, [field]: value }));
@@ -54,35 +55,44 @@ export default function BookingRequest() {
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
 
     setSubmitting(true);
+    setSubmitError(null);
     const token = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-    const booking = await base44.entities.Booking.create({
-      client_name: form.client_name.trim(),
-      client_email: form.client_email.trim(),
-      client_phone: form.client_phone.trim() || undefined,
-      session_type: form.session_type,
-      session_date: new Date(form.preferred_date).toISOString(),
-      location: form.location.trim() || undefined,
-      notes: form.notes.trim() || undefined,
-      status: "pending",
-      deposit_paid: false,
-      reminder_sent: false,
-      access_token: token,
-    });
-
-    // Notify photographer
     try {
-      const me = await base44.auth.me();
-      if (me?.email) {
-        await base44.integrations.Core.SendEmail({
-          to: me.email,
-          subject: `New session request from ${form.client_name}`,
-          body: `You have a new booking request!\n\nClient: ${form.client_name}\nEmail: ${form.client_email}${form.client_phone ? `\nPhone: ${form.client_phone}` : ""}\nSession Type: ${form.session_type}\nPreferred Date: ${new Date(form.preferred_date).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}${form.location ? `\nLocation: ${form.location}` : ""}${form.notes ? `\nNotes: ${form.notes}` : ""}\n\nClient portal link: ${window.location.origin}/booking-status?token=${token}\n\nLog in to LensFlow to confirm or update this booking.`,
-        });
-      }
-    } catch (_) {}
+      await base44.entities.Booking.create({
+        client_name: form.client_name.trim(),
+        client_email: form.client_email.trim(),
+        client_phone: form.client_phone.trim() || undefined,
+        session_type: form.session_type,
+        session_date: new Date(form.preferred_date).toISOString(),
+        location: form.location.trim() || undefined,
+        notes: form.notes.trim() || undefined,
+        status: "pending",
+        deposit_paid: false,
+        reminder_sent: false,
+        access_token: token,
+      });
 
-    setSubmitting(false);
-    setSubmitted(true);
+      // Best-effort photographer notification — never blocks the success flow.
+      try {
+        const me = await base44.auth.me();
+        if (me?.email) {
+          await base44.integrations.Core.SendEmail({
+            to: me.email,
+            subject: `New session request from ${form.client_name}`,
+            body: `You have a new booking request!\n\nClient: ${form.client_name}\nEmail: ${form.client_email}${form.client_phone ? `\nPhone: ${form.client_phone}` : ""}\nSession Type: ${form.session_type}\nPreferred Date: ${new Date(form.preferred_date).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}${form.location ? `\nLocation: ${form.location}` : ""}${form.notes ? `\nNotes: ${form.notes}` : ""}\n\nClient portal link: ${window.location.origin}/client-booking?token=${token}\n\nLog in to LensFlow to confirm or update this booking.`,
+          });
+        }
+      } catch (_) { /* notification failures must not break the user flow */ }
+
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(
+        err?.message ||
+          "We couldn't submit your request. Please check your connection and try again."
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   if (submitted) return <SuccessScreen name={form.client_name} />;
@@ -187,6 +197,19 @@ export default function BookingRequest() {
               />
             </Field>
           </Section>
+
+          {submitError && (
+            <div
+              role="alert"
+              className="rounded-xl border border-destructive/40 bg-destructive/5 text-destructive px-4 py-3 text-sm"
+            >
+              <p className="font-medium">We couldn't send your request</p>
+              <p className="mt-1 text-destructive/80">{submitError}</p>
+              <p className="mt-1 text-destructive/80">
+                Please try again. If the problem continues, contact your photographer directly.
+              </p>
+            </div>
+          )}
 
           <Button
             type="submit"

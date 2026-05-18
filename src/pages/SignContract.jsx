@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import { contractsApi } from "@/api/contracts";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { CheckCircle, Camera, FileText, User, Mail, Calendar, Pen, Lock } from "lucide-react";
@@ -16,15 +17,23 @@ const typeLabels = {
 };
 
 export default function SignContract() {
-  const contractId = window.location.pathname.split("/sign/")[1];
+  const params = useParams();
+  // Canonical: /sign-contract/:id. Legacy: /sign/:id (still supported by App.jsx).
+  const contractId =
+    params.id ||
+    (typeof window !== "undefined"
+      ? window.location.pathname.split("/sign/")[1] ||
+        window.location.pathname.split("/sign-contract/")[1]
+      : undefined);
   const [signature, setSignature] = useState("");
   const [agreed, setAgreed] = useState(false);
   const [signed, setSigned] = useState(false);
 
-  const { data: contract, isLoading } = useQuery({
+  const { data: contract, isLoading, error } = useQuery({
     queryKey: ["public-contract", contractId],
     queryFn: () => contractsApi.get(contractId),
     enabled: !!contractId,
+    retry: false,
   });
 
   const signMutation = useMutation({
@@ -65,13 +74,15 @@ export default function SignContract() {
     );
   }
 
-  if (!contract) {
+  if (error || !contract) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background font-body p-4">
         <div className="text-center">
           <FileText className="w-12 h-12 mx-auto mb-3 text-muted-foreground opacity-40" />
           <h2 className="text-xl font-heading font-semibold text-foreground">Contract Not Found</h2>
-          <p className="text-muted-foreground mt-2">This link may be invalid or expired.</p>
+          <p className="text-muted-foreground mt-2">
+            {error?.message || "This link may be invalid or expired."}
+          </p>
         </div>
       </div>
     );

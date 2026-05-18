@@ -2,7 +2,37 @@ import { appParams } from '@/lib/app-params';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || '/api').replace(/\/$/, '');
 
-const getToken = () => localStorage.getItem('auth_token') || appParams.token || localStorage.getItem('token');
+const AUTH_STORAGE_KEY = 'auth_token';
+
+const getToken = () =>
+  (typeof localStorage !== 'undefined' && localStorage.getItem(AUTH_STORAGE_KEY)) ||
+  appParams.token ||
+  (typeof localStorage !== 'undefined' && localStorage.getItem('token')) ||
+  null;
+
+const setToken = (token) => {
+  if (typeof localStorage === 'undefined') return;
+  if (token) localStorage.setItem(AUTH_STORAGE_KEY, token);
+  else {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    localStorage.removeItem('token');
+  }
+};
+
+class ApiError extends Error {
+  constructor(message, status, body) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.body = body;
+  }
+}
+
+const parseBody = async (res) => {
+  const text = await res.text();
+  if (!text) return null;
+  try { return JSON.parse(text); } catch { return text; }
+};
 
 const request = async (path, options = {}) => {
   const token = getToken();
@@ -12,13 +42,31 @@ const request = async (path, options = {}) => {
   };
   if (token) headers.Authorization = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
+  let res;
+  try {
+    res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
+  } catch (networkErr) {
+    throw new ApiError(
+      'Unable to reach the server. Check your connection and try again.',
+      0,
+      networkErr?.message
+    );
+  }
+
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(body || `Request failed: ${res.status}`);
+    const body = await parseBody(res);
+    const message =
+      (body && typeof body === 'object' && (body.message || body.error)) ||
+      (typeof body === 'string' && body) ||
+      `Request failed (${res.status})`;
+    if (res.status === 401) {
+      // Token is invalid/expired — clear it so the UI can prompt re-login.
+      setToken(null);
+    }
+    throw new ApiError(message, res.status, body);
   }
   if (res.status === 204) return null;
-  return res.json();
+  return parseBody(res);
 };
 
 const toQuery = (obj = {}) => {
@@ -43,6 +91,7 @@ const entity = (name) => ({
 });
 
 export const base44 = {
+  ApiError,
   entities: {
     Booking: entity('bookings'),
     Contract: entity('contracts'),
@@ -64,25 +113,41 @@ export const base44 = {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
           body: form
         });
-        if (!res.ok) throw new Error('File upload failed');
+        if (!res.ok) {
+          const body = await parseBody(res);
+          throw new ApiError(
+            (body && body.message) || 'File upload failed',
+            res.status,
+            body
+          );
+        }
         return res.json();
       }
     }
   },
   auth: {
     me: () => request('/auth/me'),
-    logout: (redirectUrl) => {
-      localStorage.removeItem('auth_token');
-      localStorage.removeItem('token');
-      if (redirectUrl) window.location.href = redirectUrl;
+    login: async (email, password) => {
+      const data = await request('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      });
+      if (data?.token) setToken(data.token);
+      return data;
     },
-    redirectToLogin: (fromUrl) => {
-      window.location.href = `/login?from=${encodeURIComponent(fromUrl || window.location.href)}`;
-    }
+    logout: async () => {
+      try { await request('/auth/logout', { method: 'POST' }); } catch { /* ignore */ }
+      setToken(null);
+    },
+    getToken,
+    setToken
   },
   agents: {
     createConversation: (payload) => request('/agents/conversations', { method: 'POST', body: JSON.stringify(payload) }),
+    getConversation: (id) => request(`/agents/conversations/${id}`),
     subscribeToConversation: (_id, _cb) => () => {},
     addMessage: (conversation, payload) => request(`/agents/conversations/${conversation.id}/messages`, { method: 'POST', body: JSON.stringify(payload) })
   }
 };
+
+export { ApiError };

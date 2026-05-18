@@ -8,15 +8,17 @@ import { format, isAfter, startOfToday } from "date-fns";
 import { motion } from "framer-motion";
 import StatCard from "@/components/dashboard/StatCard";
 import UpcomingShootCard from "@/components/dashboard/UpcomingShootCard";
+import ErrorState from "@/components/ErrorState";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
-  const { data: bookings = [], isLoading: loadingBookings } = useQuery({
+  const bookingsQuery = useQuery({
     queryKey: ["bookings"],
     queryFn: () => base44.entities.Booking.list("-session_date"),
   });
+  const { data: bookings = [], isLoading: loadingBookings, error: bookingsError, refetch: refetchBookings } = bookingsQuery;
 
   const { data: contracts = [] } = useQuery({
     queryKey: ["contracts"],
@@ -64,6 +66,14 @@ export default function Dashboard() {
           </Link>
         </div>
       </div>
+
+      {bookingsError && (
+        <ErrorState
+          title="Couldn't load your bookings"
+          error={bookingsError}
+          onRetry={() => refetchBookings()}
+        />
+      )}
 
       {/* Stats Grid */}
       {loadingBookings ? (

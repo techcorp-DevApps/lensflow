@@ -10,6 +10,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import ErrorState from "@/components/ErrorState";
 
 export default function Reminders() {
   const [customMessage, setCustomMessage] = useState(null);
@@ -21,7 +22,7 @@ export default function Reminders() {
     base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
   }, []);
 
-  const { data: bookings = [], isLoading } = useQuery({
+  const { data: bookings = [], isLoading, error, refetch } = useQuery({
     queryKey: ["bookings"],
     queryFn: () => base44.entities.Booking.list("-session_date"),
   });
@@ -87,6 +88,10 @@ export default function Reminders() {
             <Send className="w-4 h-4" /> Send All Reminders
           </Button>
         </div>
+      )}
+
+      {error && (
+        <ErrorState title="Couldn't load bookings" error={error} onRetry={() => refetch()} />
       )}
 
       {/* Bookings List */}

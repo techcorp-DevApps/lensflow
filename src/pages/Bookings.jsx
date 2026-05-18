@@ -11,6 +11,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import BookingForm from "@/components/bookings/BookingForm";
+import ErrorState from "@/components/ErrorState";
 
 const statusStyles = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -42,7 +43,7 @@ export default function Bookings() {
     }
   }, []);
 
-  const { data: bookings = [], isLoading } = useQuery({
+  const { data: bookings = [], isLoading, error, refetch } = useQuery({
     queryKey: ["bookings"],
     queryFn: () => base44.entities.Booking.list("-session_date"),
   });
@@ -145,6 +146,10 @@ export default function Bookings() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input placeholder="Search bookings..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
       </div>
+
+      {error && (
+        <ErrorState title="Couldn't load bookings" error={error} onRetry={() => refetch()} />
+      )}
 
       {/* Table */}
       <div className="bg-card border border-border rounded-xl overflow-hidden">

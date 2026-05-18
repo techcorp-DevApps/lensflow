@@ -5,9 +5,8 @@ const GALLERY_PATH = "/entities/Gallery";
 
 const buildHeaders = () => {
   const headers = { "Content-Type": "application/json" };
-  if (appParams.token) {
-    headers.Authorization = `Bearer ${appParams.token}`;
-  }
+  const token = base44.auth.getToken?.() || appParams.token;
+  if (token) headers.Authorization = `Bearer ${token}`;
   return headers;
 };
 

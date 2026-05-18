@@ -3,8 +3,8 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import { AuthProvider } from '@/lib/AuthContext';
+import RequireAuth from '@/components/RequireAuth';
 import AppLayout from '@/components/layout/AppLayout';
 import Dashboard from '@/pages/Dashboard';
 import Bookings from '@/pages/Bookings';
@@ -17,38 +17,35 @@ import SignContract from '@/pages/SignContract';
 import BookingChat from '@/pages/BookingChat';
 import ClientBooking from '@/pages/ClientBooking';
 import BookingRequest from '@/pages/BookingRequest';
+import Login from '@/pages/Login';
+import Logout from '@/pages/Logout';
 
-const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
+const AppRoutes = () => (
+  <Routes>
+    {/* Auth */}
+    <Route path="/login" element={<Login />} />
+    <Route path="/logout" element={<Logout />} />
 
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return (
-      <div className="fixed inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-slate-200 border-t-slate-800 rounded-full animate-spin"></div>
-      </div>
-    );
-  }
+    {/* Public routes — accessible without an authenticated session.
+        Both the canonical task-spec paths and the legacy paths used by
+        existing share links are exposed so neither set 404s. */}
+    <Route path="/booking-request" element={<BookingRequest />} />
+    <Route path="/request" element={<BookingRequest />} />
 
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
-  }
+    <Route path="/client-gallery/:id" element={<ClientGallery />} />
+    <Route path="/gallery/:id" element={<ClientGallery />} />
 
-  // Render the main app
-  return (
-    <Routes>
-      <Route path="/gallery/:id" element={<ClientGallery />} />
-      <Route path="/sign/:id" element={<SignContract />} />
-      <Route path="/book" element={<BookingChat />} />
-      <Route path="/booking-status" element={<ClientBooking />} />
-      <Route path="/request" element={<BookingRequest />} />
+    <Route path="/sign-contract/:id" element={<SignContract />} />
+    <Route path="/sign/:id" element={<SignContract />} />
+
+    <Route path="/client-booking/:id" element={<ClientBooking />} />
+    <Route path="/client-booking" element={<ClientBooking />} />
+    <Route path="/booking-status" element={<ClientBooking />} />
+
+    <Route path="/book" element={<BookingChat />} />
+
+    {/* Authenticated app */}
+    <Route element={<RequireAuth />}>
       <Route element={<AppLayout />}>
         <Route path="/" element={<Dashboard />} />
         <Route path="/bookings" element={<Bookings />} />
@@ -57,23 +54,22 @@ const AuthenticatedApp = () => {
         <Route path="/checklists" element={<Checklists />} />
         <Route path="/reminders" element={<Reminders />} />
       </Route>
-      <Route path="*" element={<PageNotFound />} />
-    </Routes>
-  );
-};
+    </Route>
 
+    <Route path="*" element={<PageNotFound />} />
+  </Routes>
+);
 
 function App() {
-
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClientInstance}>
-        <Router>
-          <AuthenticatedApp />
-        </Router>
-        <Toaster />
-      </QueryClientProvider>
-    </AuthProvider>
+    <QueryClientProvider client={queryClientInstance}>
+      <Router>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </Router>
+      <Toaster />
+    </QueryClientProvider>
   )
 }
 

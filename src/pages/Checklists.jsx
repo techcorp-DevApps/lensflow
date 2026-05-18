@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import ChecklistEditor from "@/components/checklists/ChecklistEditor";
 import ShootChecklistView from "@/components/checklists/ShootChecklistView";
+import ErrorState from "@/components/ErrorState";
 
 const categoryIcons = {
   gear: Package,
@@ -44,12 +45,12 @@ export default function Checklists() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: templates = [], isLoading: loadingTemplates } = useQuery({
+  const { data: templates = [], isLoading: loadingTemplates, error: templatesError, refetch: refetchTemplates } = useQuery({
     queryKey: ["checklist-templates"],
     queryFn: () => base44.entities.ChecklistTemplate.list(),
   });
 
-  const { data: shootChecklists = [], isLoading: loadingChecklists } = useQuery({
+  const { data: shootChecklists = [], isLoading: loadingChecklists, error: checklistsError, refetch: refetchChecklists } = useQuery({
     queryKey: ["shoot-checklists"],
     queryFn: () => base44.entities.ShootChecklist.list("-created_date"),
   });
@@ -104,7 +105,9 @@ export default function Checklists() {
       {/* Templates Section */}
       <div>
         <h2 className="text-lg font-heading font-semibold mb-4">Checklist Templates</h2>
-        {loadingTemplates ? (
+        {templatesError ? (
+          <ErrorState title="Couldn't load templates" error={templatesError} onRetry={() => refetchTemplates()} />
+        ) : loadingTemplates ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-40 rounded-xl" />)}
           </div>
@@ -143,7 +146,9 @@ export default function Checklists() {
       {/* Active Checklists */}
       <div>
         <h2 className="text-lg font-heading font-semibold mb-4">Active Shoot Checklists</h2>
-        {loadingChecklists ? (
+        {checklistsError ? (
+          <ErrorState title="Couldn't load checklists" error={checklistsError} onRetry={() => refetchChecklists()} />
+        ) : loadingChecklists ? (
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-16 rounded-lg" />)}
           </div>

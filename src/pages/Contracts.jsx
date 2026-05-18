@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import ContractForm from "@/components/contracts/ContractForm";
 import ContractViewer from "@/components/contracts/ContractViewer";
+import ErrorState from "@/components/ErrorState";
 
 const statusConfig = {
   draft: { icon: Clock, color: "bg-gray-100 text-gray-700", label: "Draft" },
@@ -34,7 +35,7 @@ export default function Contracts() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: contracts = [], isLoading } = useQuery({
+  const { data: contracts = [], isLoading, error, refetch } = useQuery({
     queryKey: ["contracts"],
     queryFn: () => contractsApi.list({ sort_by: "-created_date" }),
   });
@@ -100,6 +101,10 @@ export default function Contracts() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input placeholder="Search contracts..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
       </div>
+
+      {error && (
+        <ErrorState title="Couldn't load contracts" error={error} onRetry={() => refetch()} />
+      )}
 
       {/* Contract Cards Grid */}
       {isLoading ? (

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { galleriesApi } from "@/api/galleries";
 import { format } from "date-fns";
@@ -28,7 +29,12 @@ export default function ClientBooking() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const token = new URLSearchParams(window.location.search).get("token");
+  const params = useParams();
+  // Canonical route is /client-booking/:id where :id is the booking access token.
+  // Legacy /booking-status?token=... links are still supported.
+  const token =
+    params.id ||
+    new URLSearchParams(typeof window !== "undefined" ? window.location.search : "").get("token");
 
   useEffect(() => {
     if (!token) { setError("Invalid link. No access token provided."); setLoading(false); return; }
@@ -36,22 +42,27 @@ export default function ClientBooking() {
   }, [token]);
 
   const loadData = async () => {
-    const results = await base44.entities.Booking.filter({ access_token: token });
-    if (!results || results.length === 0) {
-      setError("Booking not found. Please check your link or contact your photographer.");
-      setLoading(false);
-      return;
-    }
-    const b = results[0];
-    setBooking(b);
+    try {
+      const results = await base44.entities.Booking.filter({ access_token: token });
+      if (!results || results.length === 0) {
+        setError("Booking not found. Please check your link or contact your photographer.");
+        setLoading(false);
+        return;
+      }
+      const b = results[0];
+      setBooking(b);
 
-    const [contractResults, galleryResults] = await Promise.all([
-      base44.entities.Contract.filter({ booking_id: b.id }),
-      b.gallery_id ? galleriesApi.filter({ id: b.gallery_id }) : Promise.resolve([]),
-    ]);
-    setContracts(contractResults || []);
-    if (galleryResults?.length > 0) setGallery(galleryResults[0]);
-    setLoading(false);
+      const [contractResults, galleryResults] = await Promise.all([
+        base44.entities.Contract.filter({ booking_id: b.id }).catch(() => []),
+        b.gallery_id ? galleriesApi.filter({ id: b.gallery_id }).catch(() => []) : Promise.resolve([]),
+      ]);
+      setContracts(contractResults || []);
+      if (galleryResults?.length > 0) setGallery(galleryResults[0]);
+    } catch (err) {
+      setError(err?.message || "We couldn't load your booking. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) return (

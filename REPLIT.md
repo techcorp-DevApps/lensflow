@@ -47,3 +47,28 @@ A first-party Node + Express + PostgreSQL API lives in `server/`. It exposes `/a
 - `OPENAI_API_KEY` — wired up by the OpenAI proxy task
 
 See `.env.example` for the full list and `docs/api-migration.md` for the API contract.
+
+## Frontend environment variables
+
+The browser bundle reads only `VITE_*` variables. None of them may contain a
+secret — anything prefixed with `VITE_` is shipped to the client.
+
+- `VITE_API_BASE_URL` — base URL for the API. Defaults to `/api` (same-origin
+  production builds). In split dev, point this at the API host
+  (e.g. `http://localhost:3000/api`).
+- `VITE_OPENAI_PROJECT_NAME` *(optional)* — non-secret OpenAI project label
+  forwarded to the server proxy in conversation metadata.
+- `VITE_OPENAI_PROJECT_ID` *(optional)* — non-secret OpenAI project id
+  forwarded to the server proxy in conversation metadata.
+
+`VITE_OPENAI_API_KEY` is **not** read by the client. The OpenAI key lives only
+on the server as `OPENAI_API_KEY` and is used by the server-side proxy.
+
+## Auth flow
+
+- `/login` posts to `/api/auth/login` and stores the returned JWT in
+  `localStorage` (`auth_token`).
+- Authenticated routes are wrapped in `<RequireAuth />`; unauthenticated visits
+  redirect to `/login?from=<original-path>` and return there after sign-in.
+- Public routes (no auth needed): `/login`, `/logout`, `/request`,
+  `/booking-status`, `/book`, `/gallery/:id`, `/sign/:id`.

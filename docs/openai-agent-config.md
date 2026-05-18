@@ -1,11 +1,20 @@
 # OpenAI agent integration (Booking Assistant)
 
-Configure these environment variables for the frontend runtime:
+## Server (required)
 
-- `VITE_OPENAI_PROJECT_NAME` (example: `lensflow`)
-- `VITE_OPENAI_PROJECT_ID` (example: `proj_xxx`)
-- `VITE_OPENAI_API_KEY` *(optional; use only with a secure backend relay in dev)*
+The OpenAI key lives **only** on the server. Set it on the API process:
 
-The booking chat passes these values in conversation metadata so the backend agent orchestration can select the OpenAI project context.
+- `OPENAI_API_KEY` — production OpenAI secret. Consumed by the server-side
+  agent proxy (see Task #3) and never exposed to the browser.
 
-> Security note: do not expose production API keys directly in browser bundles. Prefer server-side secret management.
+## Frontend (optional, non-secret)
+
+The booking chat may forward non-secret OpenAI project metadata to the server
+inside the conversation `metadata.integration` payload so the proxy can pick
+the right project context:
+
+- `VITE_OPENAI_PROJECT_NAME` — e.g. `lensflow`
+- `VITE_OPENAI_PROJECT_ID` — e.g. `proj_xxx`
+
+Both are optional. Never put `OPENAI_API_KEY` (or any secret) behind a `VITE_`
+prefix — anything `VITE_*` is bundled into the public JS shipped to browsers.
