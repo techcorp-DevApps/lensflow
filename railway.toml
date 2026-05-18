@@ -2,6 +2,9 @@
 builder = "NIXPACKS"
 buildCommand = "npm ci && npm run build"
 
+[build.buildEnvironment]
+CACHE_BUST = "1"  # Change this value to force cache invalidation
+
 [deploy]
 numReplicas = 1
 healthcheckPath = "/health"
