@@ -1,12 +1,14 @@
 [build]
 builder = "NIXPACKS"
 buildEnvironment = "V3"
+buildCommand = "npm ci && npm run build"
 
 [deploy]
 runtime = "V2"
 numReplicas = 1
 healthcheckPath = "/health"
-startCommand = "npm run start:prod"
+healthcheckTimeout = 30
+startCommand = "npm start"
 sleepApplication = false
 useLegacyStacker = false
 ipv6EgressEnabled = true

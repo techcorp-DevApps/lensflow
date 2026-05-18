@@ -48,6 +48,14 @@ A first-party Node + Express + PostgreSQL API lives in `server/`. It exposes `/a
 
 See `.env.example` for the full list and `docs/api-migration.md` for the API contract.
 
+### Deployment & OTA
+
+- `docs/deployment/github-secrets.md` — GitHub Actions secrets checklist.
+- `docs/deployment/railway-env.md` — Railway service environment variables.
+- `docs/deployment/ota-updates.md` — merge-to-main → Railway deploy flow.
+
+Production runs `npm start` (built by `npm ci && npm run build` in the Nixpacks build phase). Healthcheck is `GET /health`. Pushing to `main` triggers `.github/workflows/deploy-railway.yml`, which validates, deploys, and then curls `/health`, `/api/auth/me`, and `/` to fail loudly if production is broken.
+
 ## Frontend environment variables
 
 The browser bundle reads only `VITE_*` variables. None of them may contain a
