@@ -1,11 +1,11 @@
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { appParams } from "@/lib/app-params";
 
 const CONTRACT_PATH = "/entities/Contract";
 
 const buildHeaders = () => {
   const headers = { "Content-Type": "application/json" };
-  const token = base44.auth.getToken?.() || appParams.token;
+  const token = apiClient.auth.getToken?.() || appParams.token;
   if (token) headers.Authorization = `Bearer ${token}`;
   return headers;
 };
@@ -48,18 +48,18 @@ const buildQuery = ({ q, limit, skip, sort_by } = {}) => {
 export const contractsApi = {
   list: (options = {}) => {
     if (typeof options === "string") {
-      return base44.entities.Contract.list(options);
+      return apiClient.entities.Contract.list(options);
     }
     return request(buildQuery(options));
   },
-  create: (data) => base44.entities.Contract.create(data),
-  deleteMany: (query = {}) => base44.entities.Contract.deleteMany(query),
-  bulkCreate: (records) => base44.entities.Contract.bulkCreate(records),
+  create: (data) => apiClient.entities.Contract.create(data),
+  deleteMany: (query = {}) => apiClient.entities.Contract.deleteMany(query),
+  bulkCreate: (records) => apiClient.entities.Contract.bulkCreate(records),
   bulkUpdate: (records) => request("/bulk", { method: "PUT", body: JSON.stringify(records) }),
   updateMany: ({ query = {}, data = {} }) =>
     request("/update-many", { method: "PATCH", body: JSON.stringify({ query, data }) }),
-  get: (id) => base44.entities.Contract.get(id),
-  update: (id, data) => base44.entities.Contract.update(id, data),
-  delete: (id) => base44.entities.Contract.delete(id),
-  restore: (id) => base44.entities.Contract.restore(id),
+  get: (id) => apiClient.entities.Contract.get(id),
+  update: (id, data) => apiClient.entities.Contract.update(id, data),
+  delete: (id) => apiClient.entities.Contract.delete(id),
+  restore: (id) => apiClient.entities.Contract.restore(id),
 };

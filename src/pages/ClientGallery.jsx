@@ -1,7 +1,7 @@
 // inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { galleriesApi } from "@/api/galleries";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lock, Camera, Download, Heart } from "lucide-react";
@@ -35,12 +35,12 @@ export default function ClientGallery() {
 
   const { data: images = [], error: imagesError, isLoading: loadingImages, refetch: refetchImages } = useQuery({
     queryKey: ["public-gallery-images", galleryId],
-    queryFn: () => base44.entities.GalleryImage.filter({ gallery_id: galleryId }, "order"),
+    queryFn: () => apiClient.entities.GalleryImage.filter({ gallery_id: galleryId }, "order"),
     enabled: authenticated && !!galleryId,
   });
 
   const toggleSelectMutation = useMutation({
-    mutationFn: (/** @type {{ id: string, selected: boolean }} */ { id, selected }) => base44.entities.GalleryImage.update(id, { selected }),
+    mutationFn: (/** @type {{ id: string, selected: boolean }} */ { id, selected }) => apiClient.entities.GalleryImage.update(id, { selected }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["public-gallery-images", galleryId] }),
   });
 

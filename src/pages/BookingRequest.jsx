@@ -1,6 +1,6 @@
 // inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -59,7 +59,7 @@ export default function BookingRequest() {
     setSubmitError(null);
     const token = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
     try {
-      await base44.entities.Booking.create({
+      await apiClient.entities.Booking.create({
         client_name: form.client_name.trim(),
         client_email: form.client_email.trim(),
         client_phone: form.client_phone.trim() || undefined,
@@ -75,9 +75,9 @@ export default function BookingRequest() {
 
       // Best-effort photographer notification — never blocks the success flow.
       try {
-        const me = await base44.auth.me();
+        const me = await apiClient.auth.me();
         if (me?.email) {
-          await base44.integrations.Core.SendEmail({
+          await apiClient.integrations.Core.SendEmail({
             to: me.email,
             subject: `New session request from ${form.client_name}`,
             body: `You have a new booking request!\n\nClient: ${form.client_name}\nEmail: ${form.client_email}${form.client_phone ? `\nPhone: ${form.client_phone}` : ""}\nSession Type: ${form.session_type}\nPreferred Date: ${new Date(form.preferred_date).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })}${form.location ? `\nLocation: ${form.location}` : ""}${form.notes ? `\nNotes: ${form.notes}` : ""}\n\nClient portal link: ${window.location.origin}/client-booking?token=${token}\n\nLog in to LensFlow to confirm or update this booking.`,

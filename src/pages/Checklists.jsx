@@ -1,6 +1,6 @@
 // inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, CheckSquare, Camera, Package, MapPin, MessageSquare, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,21 +48,21 @@ export default function Checklists() {
 
   const { data: templates = [], isLoading: loadingTemplates, error: templatesError, refetch: refetchTemplates } = useQuery({
     queryKey: ["checklist-templates"],
-    queryFn: () => base44.entities.ChecklistTemplate.list(),
+    queryFn: () => apiClient.entities.ChecklistTemplate.list(),
   });
 
   const { data: shootChecklists = [], isLoading: loadingChecklists, error: checklistsError, refetch: refetchChecklists } = useQuery({
     queryKey: ["shoot-checklists"],
-    queryFn: () => base44.entities.ShootChecklist.list("-created_date"),
+    queryFn: () => apiClient.entities.ShootChecklist.list("-created_date"),
   });
 
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list(),
+    queryFn: () => apiClient.entities.Booking.list(),
   });
 
   const createTemplateMutation = useMutation({
-    mutationFn: (/** @type {any} */ data) => base44.entities.ChecklistTemplate.create(data),
+    mutationFn: (/** @type {any} */ data) => apiClient.entities.ChecklistTemplate.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checklist-templates"] });
       setShowEditor(false);
@@ -71,7 +71,7 @@ export default function Checklists() {
   });
 
   const updateTemplateMutation = useMutation({
-    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => base44.entities.ChecklistTemplate.update(id, data),
+    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => apiClient.entities.ChecklistTemplate.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checklist-templates"] });
       setShowEditor(false);
@@ -82,7 +82,7 @@ export default function Checklists() {
 
   const createFromTemplate = async (template, bookingId) => {
     const items = template.items.map(item => ({ ...item, completed: false }));
-    await base44.entities.ShootChecklist.create({
+    await apiClient.entities.ShootChecklist.create({
       booking_id: bookingId,
       session_type: template.session_type,
       items,

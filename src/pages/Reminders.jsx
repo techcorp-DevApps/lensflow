@@ -1,6 +1,6 @@
 // inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, differenceInDays, isAfter, startOfToday } from "date-fns";
 import { Bell, Send, Check, Mail, MapPin, AlertCircle } from "lucide-react";
@@ -20,16 +20,16 @@ export default function Reminders() {
   const { toast } = useToast();
 
   useEffect(() => {
-    base44.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
+    apiClient.auth.me().then(u => setCurrentUserEmail(u?.email)).catch(() => {});
   }, []);
 
   const { data: bookings = [], isLoading, error, refetch } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list("-session_date"),
+    queryFn: () => apiClient.entities.Booking.list("-session_date"),
   });
 
   const updateMutation = useMutation({
-    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => base44.entities.Booking.update(id, data),
+    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => apiClient.entities.Booking.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["bookings"] }),
   });
 
@@ -45,7 +45,7 @@ export default function Reminders() {
     // Send to yourself (photographer) since the platform only supports emails to app users.
     // The email contains the full reminder text so you can forward it to the client.
     if (currentUserEmail) {
-      await base44.integrations.Core.SendEmail({
+      await apiClient.integrations.Core.SendEmail({
         to: currentUserEmail,
         subject: `[Forward to client] Reminder for ${booking.client_name} — ${format(new Date(booking.session_date), "MMMM d")}`,
         body: `Please forward this reminder to your client at ${booking.client_email}:\n\n---\n\n${message || defaultBody}`,

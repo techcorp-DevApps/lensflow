@@ -189,7 +189,16 @@ const userConfirmedAfterDraft = async (conversationId) => {
   return users.length > 0;
 };
 
+const bookingWritesAllowed = () => {
+  const v = String(process.env.AGENT_ALLOW_BOOKING_WRITES || '').trim().toLowerCase();
+  if (!v) return process.env.NODE_ENV !== 'production';
+  return ['1','true','yes','on'].includes(v);
+};
+
 const runSubmitBookingRequest = async (args, ctx) => {
+  if (!bookingWritesAllowed()) {
+    return { ok: false, error: 'booking_writes_disabled', message: 'Booking writes are disabled by server policy.' };
+  }
   if (!SESSION_TYPES.includes(args.session_type)) {
     return { ok: false, error: 'invalid_session_type' };
   }

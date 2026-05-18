@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Send, Camera, Loader2, AlertCircle } from "lucide-react";
@@ -73,7 +73,7 @@ export default function BookingChat() {
     startedRef.current = true;
     setIsStarting(true);
     try {
-      const conv = await base44.agents.createConversation({
+      const conv = await apiClient.agents.createConversation({
         title: "New Booking Inquiry",
         metadata: {
           name: "New Booking Inquiry",
@@ -114,7 +114,7 @@ export default function BookingChat() {
       let streamed = "";
       let finalAssistant = null;
 
-      const result = await base44.agents.streamMessage(conv, { role: "user", content: text }, {
+      const result = await apiClient.agents.streamMessage(conv, { role: "user", content: text }, {
         onEvent: (event, payload) => {
           if (event === "token" && payload?.delta) {
             streamed += payload.delta;
@@ -137,7 +137,7 @@ export default function BookingChat() {
         // Stream was rejected before anything was persisted — safe to fall
         // back to the non-streaming JSON endpoint.
         try {
-          const reply = await base44.agents.addMessage(conv, { role: "user", content: text });
+          const reply = await apiClient.agents.addMessage(conv, { role: "user", content: text });
           if (reply && reply.role && reply.content) {
             finalAssistant = reply;
           }
