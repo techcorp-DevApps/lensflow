@@ -5,8 +5,25 @@ import { seedAdminUser } from './auth.js';
 import { hasDatabase, closePool } from './db.js';
 import { assertOpenAIBoot } from './openai-client.js';
 
+const validateEmailConfig = () => {
+  const host = process.env.SMTP_HOST;
+  if (!host) {
+    console.warn('[server] SMTP_HOST is not set; outbound emails will be logged only');
+    return;
+  }
+  const required = ['EMAIL_FROM'];
+  if (process.env.SMTP_USER) required.push('SMTP_PASSWORD');
+  const missing = required.filter((k) => !process.env[k]);
+  if (missing.length > 0) {
+    const msg = `[server] SMTP is configured but missing required variables: ${missing.join(', ')}`;
+    if (process.env.NODE_ENV === 'production') throw new Error(msg);
+    console.warn(msg);
+  }
+};
+
 const start = async () => {
   assertOpenAIBoot();
+  validateEmailConfig();
   const app = createApp();
 
   if (hasDatabase()) {

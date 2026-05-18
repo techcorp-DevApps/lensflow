@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { apiClient } from '@/api/client';
 
 const AuthContext = createContext(/** @type {any} */ (null));
 
@@ -21,13 +21,13 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingAuth(true);
       // Skip /auth/me when there is no token at all — it would 401 and noisily
       // log out the user on every load of a public route.
-      if (!base44.auth.getToken()) {
+      if (!apiClient.auth.getToken()) {
         setUser(null);
         setIsAuthenticated(false);
         setAuthError(null);
         return;
       }
-      const currentUser = await base44.auth.me();
+      const currentUser = await apiClient.auth.me();
       setUser(currentUser);
       setIsAuthenticated(true);
       setAuthError(null);
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
   }, [checkUserAuth]);
 
   const signIn = useCallback(async (email, password) => {
-    const data = await base44.auth.login(email, password);
+    const data = await apiClient.auth.login(email, password);
     setUser(data.user || null);
     setIsAuthenticated(true);
     setAuthError(null);
@@ -59,7 +59,7 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = useCallback(async () => {
-    await base44.auth.logout();
+    await apiClient.auth.logout();
     setUser(null);
     setIsAuthenticated(false);
     navigate('/login', { replace: true });

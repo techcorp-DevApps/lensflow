@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import { base44 } from '@/api/base44Client';
+import { apiClient } from '@/api/client';
 
 const Probe = () => {
   const auth = useAuth();
@@ -38,14 +38,14 @@ describe('AuthContext', () => {
 
   test('loads user from /auth/me when token exists', async () => {
     localStorage.setItem('auth_token', 'tok-1');
-    vi.spyOn(base44.auth, 'me').mockResolvedValue({ email: 'me@example.com' });
+    vi.spyOn(apiClient.auth, 'me').mockResolvedValue({ email: 'me@example.com' });
     renderWithAuth();
     await waitFor(() => expect(screen.getByTestId('authed').textContent).toBe('true'));
     expect(screen.getByTestId('email').textContent).toBe('me@example.com');
   });
 
   test('signIn updates user and authenticated state', async () => {
-    vi.spyOn(base44.auth, 'login').mockResolvedValue({
+    vi.spyOn(apiClient.auth, 'login').mockResolvedValue({
       token: 'tok-2', user: { email: 'new@example.com' },
     });
     renderWithAuth();

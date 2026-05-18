@@ -1,6 +1,6 @@
 // inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { contractsApi } from "@/api/contracts";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -43,7 +43,7 @@ export default function Contracts() {
 
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list(),
+    queryFn: () => apiClient.entities.Booking.list(),
   });
 
   const createMutation = useMutation({
@@ -65,7 +65,7 @@ export default function Contracts() {
 
   const sendContract = async (contract) => {
     const signingLink = `${window.location.origin}/sign/${contract.id}`;
-    await base44.integrations.Core.SendEmail({
+    await apiClient.integrations.Core.SendEmail({
       to: contract.client_email,
       subject: `${typeLabels[contract.type] || "Contract"} - Please Review & Sign`,
       body: `

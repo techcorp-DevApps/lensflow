@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { galleriesApi } from "@/api/galleries";
 import { format } from "date-fns";
 import { Calendar, MapPin, Camera, Clock, FileText, CheckCircle2, DollarSign, AlertCircle, XCircle, ExternalLink } from "lucide-react";
@@ -43,7 +43,7 @@ export default function ClientBooking() {
 
   const loadData = async () => {
     try {
-      const results = await base44.entities.Booking.filter({ access_token: token });
+      const results = await apiClient.entities.Booking.filter({ access_token: token });
       if (!results || results.length === 0) {
         setError("Booking not found. Please check your link or contact your photographer.");
         setLoading(false);
@@ -53,7 +53,7 @@ export default function ClientBooking() {
       setBooking(b);
 
       const [contractResults, galleryResults] = await Promise.all([
-        base44.entities.Contract.filter({ booking_id: b.id }).catch(() => []),
+        apiClient.entities.Contract.filter({ booking_id: b.id }).catch(() => []),
         b.gallery_id ? galleriesApi.filter({ id: b.gallery_id }).catch(() => []) : Promise.resolve([]),
       ]);
       setContracts(contractResults || []);

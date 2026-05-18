@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import Login from '@/pages/Login';
 import { AuthProvider } from '@/lib/AuthContext';
-import { base44 } from '@/api/base44Client';
+import { apiClient } from '@/api/client';
 
 const renderLogin = () =>
   render(
@@ -39,7 +39,7 @@ describe('Login page', () => {
   });
 
   test('successful sign-in navigates home', async () => {
-    vi.spyOn(base44.auth, 'login').mockResolvedValue({
+    vi.spyOn(apiClient.auth, 'login').mockResolvedValue({
       token: 'tok', user: { email: 'me@example.com' },
     });
     renderLogin();
@@ -51,7 +51,7 @@ describe('Login page', () => {
   });
 
   test('shows error message when sign-in fails', async () => {
-    vi.spyOn(base44.auth, 'login').mockRejectedValue(new Error('Invalid email or password'));
+    vi.spyOn(apiClient.auth, 'login').mockRejectedValue(new Error('Invalid email or password'));
     renderLogin();
     const user = userEvent.setup();
     await user.type(await screen.findByLabelText(/email/i), 'me@example.com');

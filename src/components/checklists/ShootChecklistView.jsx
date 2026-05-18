@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { CheckCircle2, Circle, Package, Camera, MapPin, MessageSquare, Image } from "lucide-react";
@@ -27,7 +27,7 @@ export default function ShootChecklistView({ checklist, booking, onClose }) {
   const { toast } = useToast();
 
   const updateMutation = useMutation({
-    mutationFn: (newItems) => base44.entities.ShootChecklist.update(checklist.id, { items: newItems }),
+    mutationFn: (newItems) => apiClient.entities.ShootChecklist.update(checklist.id, { items: newItems }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["shoot-checklists"] }),
   });
 

@@ -1,6 +1,6 @@
 // inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { galleriesApi } from "@/api/galleries";
 import { contractsApi } from "@/api/contracts";
 import { useQuery } from "@tanstack/react-query";
@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 export default function Dashboard() {
   const bookingsQuery = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list("-session_date"),
+    queryFn: () => apiClient.entities.Booking.list("-session_date"),
   });
   const { data: bookings = [], isLoading: loadingBookings, error: bookingsError, refetch: refetchBookings } = bookingsQuery;
 
