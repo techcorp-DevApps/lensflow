@@ -3,8 +3,10 @@ import { createApp } from './app.js';
 import { runMigrations } from './migrations/runner.js';
 import { seedAdminUser } from './auth.js';
 import { hasDatabase, closePool } from './db.js';
+import { assertOpenAIBoot } from './openai-client.js';
 
 const start = async () => {
+  assertOpenAIBoot();
   const app = createApp();
 
   if (hasDatabase()) {

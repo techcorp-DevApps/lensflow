@@ -146,7 +146,89 @@ export const base44 = {
     createConversation: (payload) => request('/agents/conversations', { method: 'POST', body: JSON.stringify(payload) }),
     getConversation: (id) => request(`/agents/conversations/${id}`),
     subscribeToConversation: (_id, _cb) => () => {},
-    addMessage: (conversation, payload) => request(`/agents/conversations/${conversation.id}/messages`, { method: 'POST', body: JSON.stringify(payload) })
+    addMessage: (conversation, payload) => request(`/agents/conversations/${conversation.id}/messages`, { method: 'POST', body: JSON.stringify(payload) }),
+    // Returns { accepted, completed, assistantMessage, error }.
+    // - accepted=false means the server rejected the request before any
+    //   message was persisted; the caller may safely retry via addMessage.
+    // - accepted=true means the server has already persisted the user message
+    //   and started processing; the caller must NOT retry, even on error.
+    streamMessage: async (conversation, payload, handlers = {}) => {
+      const token = getToken();
+      const headers = {
+        'Content-Type': 'application/json',
+        Accept: 'text/event-stream',
+      };
+      if (token) headers.Authorization = `Bearer ${token}`;
+      let res;
+      try {
+        res = await fetch(`${API_BASE_URL}/agents/conversations/${conversation.id}/messages?stream=1`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payload),
+        });
+      } catch (networkErr) {
+        // No bytes ever left/arrived — server never received the request.
+        return { accepted: false, completed: false, error: new ApiError(
+          'Unable to reach the server. Check your connection and try again.',
+          0,
+          networkErr?.message,
+        ) };
+      }
+      const contentType = (res.headers?.get?.('content-type') || '').toLowerCase();
+      const isSse = contentType.includes('text/event-stream');
+      if (!res.ok || !res.body || !isSse) {
+        // Server didn't establish an SSE stream. Per contract, the user
+        // message was NOT persisted in this case, so the caller may safely
+        // retry via the JSON endpoint without duplicating turns.
+        const body = await parseBody(res);
+        return { accepted: false, completed: false, error: new ApiError(
+          (body && (body.error || body.message)) || `Stream failed (${res.status})`,
+          res.status,
+          body,
+        ) };
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      let assistantMessage = null;
+      let streamError = null;
+      try {
+        // eslint-disable-next-line no-constant-condition
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          let idx;
+          while ((idx = buffer.indexOf('\n\n')) !== -1) {
+            const raw = buffer.slice(0, idx);
+            buffer = buffer.slice(idx + 2);
+            const lines = raw.split('\n');
+            let event = 'message';
+            let data = '';
+            for (const line of lines) {
+              if (line.startsWith('event:')) event = line.slice(6).trim();
+              else if (line.startsWith('data:')) data += line.slice(5).trim();
+            }
+            if (!data) continue;
+            let parsed = null;
+            try { parsed = JSON.parse(data); } catch { parsed = data; }
+            if (event === 'assistant_message') assistantMessage = parsed;
+            if (event === 'error') streamError = new ApiError(parsed?.error || 'Agent error', 500, parsed);
+            handlers.onEvent?.(event, parsed);
+          }
+        }
+      } catch (readErr) {
+        streamError = readErr instanceof ApiError ? readErr : new ApiError(readErr?.message || 'Stream read failed', 0);
+      } finally {
+        try { reader.releaseLock?.(); } catch { /* noop */ }
+      }
+      return {
+        accepted: true,
+        completed: Boolean(assistantMessage),
+        assistantMessage,
+        error: assistantMessage ? null : (streamError || new ApiError('Stream ended without an assistant reply', 500)),
+      };
+    },
   }
 };
 

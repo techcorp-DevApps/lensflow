@@ -44,7 +44,7 @@ function MessageBubble({ message }) {
               li: ({ children }) => <li className="my-0.5">{children}</li>,
             }}
           >
-            {message.content}
+            {message.content || "…"}
           </ReactMarkdown>
         )}
       </div>
@@ -55,6 +55,7 @@ function MessageBubble({ message }) {
 export default function BookingChat() {
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([WELCOME_MESSAGE]);
+  const [streamingContent, setStreamingContent] = useState("");
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isStarting, setIsStarting] = useState(false);
@@ -64,7 +65,7 @@ export default function BookingChat() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, streamingContent]);
 
   const ensureConversation = async () => {
     if (conversation) return conversation;
@@ -101,19 +102,57 @@ export default function BookingChat() {
     setError(null);
     setMessages((prev) => [...prev, { role: "user", content: text, _local: true }]);
     setIsLoading(true);
+    setStreamingContent("");
+
     try {
       const conv = await ensureConversation();
       if (!conv) {
         setIsLoading(false);
         return;
       }
-      const reply = await base44.agents.addMessage(conv, { role: "user", content: text });
-      if (reply && reply.role && reply.content) {
-        setMessages((prev) => [...prev, reply]);
+
+      let streamed = "";
+      let finalAssistant = null;
+
+      const result = await base44.agents.streamMessage(conv, { role: "user", content: text }, {
+        onEvent: (event, payload) => {
+          if (event === "token" && payload?.delta) {
+            streamed += payload.delta;
+            setStreamingContent(streamed);
+          } else if (event === "assistant_message") {
+            finalAssistant = payload;
+          }
+        },
+      });
+
+      if (result.accepted) {
+        // The server has already persisted the user message. Never retry; that
+        // would double-submit and could trigger duplicate tool calls (e.g. a
+        // second booking record). Surface any stream error directly instead.
+        finalAssistant = result.assistantMessage || finalAssistant;
+        if (!finalAssistant && result.error) {
+          setError(result.error.message || "The assistant ran into an error.");
+        }
+      } else {
+        // Stream was rejected before anything was persisted — safe to fall
+        // back to the non-streaming JSON endpoint.
+        try {
+          const reply = await base44.agents.addMessage(conv, { role: "user", content: text });
+          if (reply && reply.role && reply.content) {
+            finalAssistant = reply;
+          }
+        } catch (fallbackErr) {
+          setError(fallbackErr?.message || result.error?.message || "We couldn't send your message. Please try again.");
+        }
+      }
+
+      if (finalAssistant) {
+        setMessages((prev) => [...prev, finalAssistant]);
       }
     } catch (err) {
       setError(err?.message || "We couldn't send your message. Please try again.");
     } finally {
+      setStreamingContent("");
       setIsLoading(false);
     }
   };
@@ -150,7 +189,11 @@ export default function BookingChat() {
           <MessageBubble key={i} message={msg} />
         ))}
 
-        {(isLoading || isStarting) && (
+        {streamingContent && (
+          <MessageBubble message={{ role: "assistant", content: streamingContent }} />
+        )}
+
+        {(isLoading || isStarting) && !streamingContent && (
           <div className="flex gap-3 mb-4">
             <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center shrink-0">
               <Camera className="w-4 h-4 text-accent" />
