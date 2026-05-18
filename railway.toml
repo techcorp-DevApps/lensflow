@@ -1,17 +1,16 @@
 [build]
 builder = "NIXPACKS"
-buildEnvironment = "V3"
 buildCommand = "npm ci && npm run build"
 
 [deploy]
-runtime = "V2"
 numReplicas = 1
 healthcheckPath = "/health"
 healthcheckTimeout = 30
 startCommand = "npm start"
 sleepApplication = false
-useLegacyStacker = false
 ipv6EgressEnabled = true
-multiRegionConfig = {"asia-southeast1-eqsg3a":{"numReplicas":1}}
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 10
+
+[deploy.multiRegionConfig.asia-southeast1-eqsg3a]
+numReplicas = 1
