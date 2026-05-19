@@ -40,9 +40,8 @@ jobs:
         run: npm run build
 
   deploy:
-    name: Deploy production
+    name: Deploy to Railway (preview)
     runs-on: ubuntu-latest
-    environment: production
     needs: validate
 
     steps:
