@@ -8,12 +8,12 @@ import {
 import { useAuth } from "@/lib/AuthContext";
 
 const navItems = [
-  { path: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { path: "/bookings", icon: CalendarDays, label: "Bookings" },
-  { path: "/contracts", icon: FileText, label: "Contracts" },
-  { path: "/galleries", icon: Image, label: "Galleries" },
-  { path: "/checklists", icon: CheckSquare, label: "Checklists" },
-  { path: "/reminders", icon: Bell, label: "Reminders" },
+  { path: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { path: "/admin/bookings", icon: CalendarDays, label: "Bookings" },
+  { path: "/admin/contracts", icon: FileText, label: "Contracts" },
+  { path: "/admin/galleries", icon: Image, label: "Galleries" },
+  { path: "/admin/checklists", icon: CheckSquare, label: "Checklists" },
+  { path: "/admin/reminders", icon: Bell, label: "Reminders" },
 ];
 
 export default function Sidebar({ mobileOpen, onMobileClose }) {
@@ -46,8 +46,8 @@ export default function Sidebar({ mobileOpen, onMobileClose }) {
       {/* Nav */}
       <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path || 
-            (item.path !== "/" && location.pathname.startsWith(item.path));
+          const isActive = location.pathname === item.path ||
+            location.pathname.startsWith(item.path + '/');
           return (
             <Link
               key={item.path}

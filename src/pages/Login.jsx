@@ -8,10 +8,10 @@ import { useAuth } from '@/lib/AuthContext';
 
 const parseReturnTo = (search) => {
   const params = new URLSearchParams(search);
-  const raw = params.get('from') || params.get('returnTo') || '/';
+  const raw = params.get('from') || params.get('returnTo') || '/admin/dashboard';
   // Only allow internal paths to prevent open-redirect.
-  if (!raw.startsWith('/') || raw.startsWith('//')) return '/';
-  if (raw.startsWith('/login')) return '/';
+  if (!raw.startsWith('/') || raw.startsWith('//')) return '/admin/dashboard';
+  if (raw.startsWith('/admin/login')) return '/admin/dashboard';
   return raw;
 };
 
@@ -59,7 +59,7 @@ export default function Login() {
           </div>
           <h1 className="text-2xl font-heading font-bold text-foreground">Sign in to LensFlow</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Manage your bookings, contracts, and galleries.
+            Studio access — for photographers only.
           </p>
         </div>
 
@@ -113,9 +113,9 @@ export default function Login() {
         </form>
 
         <p className="text-center text-xs text-muted-foreground mt-6">
-          Need to book a session?{' '}
-          <Link to="/request" className="text-accent hover:underline">
-            Request a session
+          Looking to book a session?{' '}
+          <Link to="/" className="text-accent hover:underline">
+            Visit the customer site
           </Link>
         </p>
       </div>

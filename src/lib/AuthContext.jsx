@@ -62,12 +62,13 @@ export const AuthProvider = ({ children }) => {
     await apiClient.auth.logout();
     setUser(null);
     setIsAuthenticated(false);
-    navigate('/login', { replace: true });
+    // Return to the public landing page after logout
+    navigate('/', { replace: true });
   }, [navigate]);
 
   const navigateToLogin = useCallback(() => {
     const from = location.pathname + location.search;
-    navigate(`/login?from=${encodeURIComponent(from)}`, { replace: true });
+    navigate(`/admin/login?from=${encodeURIComponent(from)}`, { replace: true });
   }, [navigate, location.pathname, location.search]);
 
   return (

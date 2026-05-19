@@ -28,6 +28,13 @@ class ApiError extends Error {
   }
 }
 
+class ForbiddenError extends ApiError {
+  constructor(message, body) {
+    super(message, 403, body);
+    this.name = 'ForbiddenError';
+  }
+}
+
 const parseBody = async (res) => {
   const text = await res.text();
   if (!text) return null;
@@ -63,6 +70,11 @@ const request = async (path, options = {}) => {
       // Token is invalid/expired — clear it so the UI can prompt re-login.
       setToken(null);
     }
+    if (res.status === 403) {
+      // Authenticated but not authorised — surface a typed error so the UI
+      // can route to the no-access page without clearing the stored JWT.
+      throw new ForbiddenError(message, body);
+    }
     throw new ApiError(message, res.status, body);
   }
   if (res.status === 204) return null;
@@ -92,6 +104,7 @@ const entity = (name) => ({
 
 export const apiClient = {
   ApiError,
+  ForbiddenError,
   entities: {
     Booking: entity('bookings'),
     Contract: entity('contracts'),
@@ -232,4 +245,4 @@ export const apiClient = {
   }
 };
 
-export { ApiError };
+export { ApiError, ForbiddenError };

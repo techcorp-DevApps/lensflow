@@ -30,7 +30,46 @@ The Express API lives in `server/` and is started by `npm run start:prod`, which
 | `STORAGE_PROVIDER` | `local` (default) or `s3` |
 | `LOCAL_UPLOAD_DIR`, `PUBLIC_UPLOAD_BASE_URL` | Local storage paths |
 | `STORAGE_BUCKET`, `STORAGE_REGION`, `STORAGE_ACCESS_KEY_ID`, `STORAGE_SECRET_ACCESS_KEY`, `STORAGE_ENDPOINT`, `STORAGE_FORCE_PATH_STYLE`, `STORAGE_PUBLIC_BASE_URL` | S3-compatible storage configuration |
-| `OPENAI_API_KEY` | Wired up by the OpenAI proxy task |
+| `OPENAI_API_KEY` | Required for the AI booking assistant |
+
+## Access control model
+
+The API enforces two access tiers:
+
+### Admin-only endpoints (require `role === 'admin'`)
+
+All CRUD/list/bulk operations on admin entities:
+
+| Route group | Admin operations |
+| --- | --- |
+| `GET/POST/PUT/PATCH/DELETE /api/bookings` | List, create, update, delete (admin-only) |
+| `GET/POST/PUT/PATCH/DELETE /api/contracts` | List, create, update, delete (admin-only) |
+| `GET/POST/PUT/PATCH/DELETE /api/galleries` | List, create, update, delete (admin-only) |
+| `GET/POST/PUT/PATCH/DELETE /api/gallery-images` | List, create, update, delete (admin-only) |
+| `GET/POST/PUT/PATCH/DELETE /api/checklist-templates` | All operations (admin-only) |
+| `GET/POST/PUT/PATCH/DELETE /api/shoot-checklists` | All operations (admin-only) |
+| `GET/POST/PUT/DELETE /api/users` | All operations (admin-only) |
+
+**Response for unauthorised callers:**
+- No token → `401 Unauthorized`
+- Non-admin token → `403 Forbidden` (never `404`, never silent redirect)
+
+### Public / token-based exceptions
+
+These endpoints are accessible without authentication to support customer token flows:
+
+| Endpoint | Purpose |
+| --- | --- |
+| `POST /api/bookings` | Anonymous booking request form |
+| `GET /api/bookings/:id` | Client booking lookup by ID/token |
+| `GET /api/contracts/:id` | Anonymous contract read |
+| `PUT /api/contracts/:id` | Contract signing (restricted to `signature`, `signed_date`, `status` fields) |
+| `GET /api/galleries/:id` | Client gallery read by ID |
+| `GET /api/gallery-images` | Gallery image list by `gallery_id` |
+| `PUT /api/gallery-images/:id` | Image selection toggle (restricted to `selected` field) |
+| `POST /api/agents/conversations` | Start an anonymous booking chat |
+| `GET /api/agents/conversations/:id` | Resume an anonymous booking chat |
+| `POST /api/agents/conversations/:id/messages` | Send a message to the booking chat |
 
 ## Migrations
 
@@ -43,4 +82,15 @@ curl https://<your-railway-domain>/health
 # -> { "ok": true, "service": "illuminate-studios-api", ... }
 ```
 
-Authenticated routes require `Authorization: Bearer <jwt>`; obtain a token via `POST /api/auth/login` with the seeded admin credentials.
+Authenticated admin routes require `Authorization: Bearer <jwt>`; obtain a token via `POST /api/auth/login` with the seeded admin credentials.
+
+```bash
+# Get a token
+curl -X POST https://<your-railway-domain>/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email":"admin@example.com","password":"your-admin-password"}'
+
+# Use the token
+curl https://<your-railway-domain>/api/bookings \
+  -H 'Authorization: Bearer <token>'
+```

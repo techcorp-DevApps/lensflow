@@ -1,7 +1,6 @@
 import { Router } from 'express';
 
 import { query } from '../db.js';
-import { requireAuth } from '../middleware/auth.js';
 import { HttpError } from '../middleware/error.js';
 
 const isPlainObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
@@ -73,6 +72,16 @@ const serializeForColumn = (value, jsonbColumns, key) => {
 };
 
 /**
+ * Requires the caller to be an authenticated admin.
+ * Returns 401 if unauthenticated, 403 if authenticated but not admin.
+ */
+const requireAdmin = (req, res, next) => {
+  if (!req.user) return res.status(401).json({ error: 'Unauthorized' });
+  if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+  next();
+};
+
+/**
  * Config:
  *   table, schema, columns, writable, jsonbColumns
  *   publicOps: array of op names allowed without auth — 'list', 'get', 'create', 'updateOne'
@@ -93,11 +102,19 @@ export const createEntityRouter = (config) => {
 
   const isPublic = (op) => publicOps.includes(op);
 
-  // Middleware: allow request if user is authenticated OR op is public
+  /**
+   * Gate middleware:
+   * - Anonymous caller (no token): allowed only for public ops (customer token flows).
+   * - Authenticated non-admin: always 403 — there are no non-admin internal callers.
+   * - Authenticated admin: allowed for all ops.
+   */
   const gate = (op) => (req, res, next) => {
-    if (req.user) return next();
-    if (isPublic(op)) return next();
-    return res.status(401).json({ error: 'Unauthorized' });
+    if (!req.user) {
+      if (isPublic(op)) return next();
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+    if (req.user.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+    next();
   };
 
   const router = Router();
@@ -122,8 +139,8 @@ export const createEntityRouter = (config) => {
     } catch (err) { next(err); }
   });
 
-  // ---- Bulk create (auth required) ----
-  router.post('/bulk', requireAuth, async (req, res, next) => {
+  // ---- Bulk create (admin required) ----
+  router.post('/bulk', requireAdmin, async (req, res, next) => {
     try {
       const list = Array.isArray(req.body) ? req.body : [];
       const created = [];
@@ -143,8 +160,8 @@ export const createEntityRouter = (config) => {
     } catch (err) { next(err); }
   });
 
-  // ---- Bulk update (auth required) ----
-  router.put('/bulk', requireAuth, async (req, res, next) => {
+  // ---- Bulk update (admin required) ----
+  router.put('/bulk', requireAdmin, async (req, res, next) => {
     try {
       const list = Array.isArray(req.body) ? req.body : [];
       const updated = [];
@@ -165,8 +182,8 @@ export const createEntityRouter = (config) => {
     } catch (err) { next(err); }
   });
 
-  // ---- Update many (auth required) ----
-  router.patch('/update-many', requireAuth, async (req, res, next) => {
+  // ---- Update many (admin required) ----
+  router.patch('/update-many', requireAdmin, async (req, res, next) => {
     try {
       // Accept both { where, data } (new) and { query, data } (legacy wrapper format)
       const body = req.body || {};
@@ -201,8 +218,8 @@ export const createEntityRouter = (config) => {
     } catch (err) { next(err); }
   });
 
-  // ---- Delete many by filter (auth required) ----
-  router.delete('/', requireAuth, async (req, res, next) => {
+  // ---- Delete many by filter (admin required) ----
+  router.delete('/', requireAdmin, async (req, res, next) => {
     try {
       const filter = req.body || {};
       const { where, values } = buildWhere(table, columns, filter);
@@ -247,8 +264,8 @@ export const createEntityRouter = (config) => {
   router.put('/:id', gate('updateOne'), updateOne(true));
   router.patch('/:id', gate('updateOne'), updateOne(true));
 
-  // ---- Delete one (auth required) ----
-  router.delete('/:id', requireAuth, async (req, res, next) => {
+  // ---- Delete one (admin required) ----
+  router.delete('/:id', requireAdmin, async (req, res, next) => {
     try {
       const { rowCount } = await query(`UPDATE ${table} SET deleted_at = NOW() WHERE id = $1 AND deleted_at IS NULL`, [req.params.id]);
       if (!rowCount) throw new HttpError(404, 'Not Found');
@@ -256,8 +273,8 @@ export const createEntityRouter = (config) => {
     } catch (err) { next(err); }
   });
 
-  // ---- Restore (auth required) ----
-  router.put('/:id/restore', requireAuth, async (req, res, next) => {
+  // ---- Restore (admin required) ----
+  router.put('/:id/restore', requireAdmin, async (req, res, next) => {
     try {
       const { rows } = await query(`UPDATE ${table} SET deleted_at = NULL, updated_date = NOW() WHERE id = $1 RETURNING *`, [req.params.id]);
       if (!rows[0]) throw new HttpError(404, 'Not Found');
