@@ -24,4 +24,4 @@ export const assertOpenAIBoot = () => {
   }
 };
 
-export const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+export const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-5-nano';

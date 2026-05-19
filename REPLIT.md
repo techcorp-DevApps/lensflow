@@ -97,6 +97,7 @@ A first-party Node + Express + PostgreSQL API lives in `server/`. It exposes `/a
 - `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASSWORD` / `EMAIL_FROM` — outbound email; when unset, emails are logged instead of sent
 - `STORAGE_PROVIDER` (`local` or `s3`) plus the matching `STORAGE_*` vars — file upload backend
 - `OPENAI_API_KEY` — required for the AI booking assistant
+- `OPENAI_MODEL` — optional override for the booking assistant model. Defaults to `gpt-5-nano` (OpenAI's latest fastest tier). If the account does not yet have access to `gpt-5-nano`, set this to `gpt-4.1-nano` as a fallback. The model name is also mirrored in `agents/booking_assistant/config.json`; the env var wins when set.
 
 See `.env.example` for the full list.
 
