@@ -33,11 +33,11 @@ jobs:
       - name: Unit tests (Vitest)
         run: npm run test:unit
 
-      - name: E2E smoke (HTTP, no browser)
-        run: npm run test:e2e:smoke
-
       - name: Build SPA
         run: npm run build
+
+      - name: E2E smoke (HTTP, no browser)
+        run: npm run test:e2e:smoke
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
