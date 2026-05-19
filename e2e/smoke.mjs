@@ -74,10 +74,10 @@ const run = async () => {
     expect(meBody.role === 'admin', 'seeded user should be admin');
     log('  login + /me OK');
 
-    // SPA shell renders on /login (Express SPA catchall)
-    const loginPage = await fetch(`${BASE}/login`);
+    // SPA shell renders on /admin/login (Express SPA catchall)
+    const loginPage = await fetch(`${BASE}/admin/login`);
     expect(loginPage.ok && (await loginPage.text()).includes('<div id="root">'),
-      'GET /login should serve SPA shell');
+      'GET /admin/login should serve SPA shell');
     log('  SPA shell served');
 
     // ---- Journey 2: anonymous booking request ----
