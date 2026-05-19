@@ -8,7 +8,8 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently --kill-others \"npm run dev:server\" \"vite\"",
+    "dev:frontend": "vite",
     "dev:server": "node --watch server/server.js",
     "build": "vite build",
     "lint": "eslint . --quiet",
@@ -125,6 +126,7 @@
     "@vitest/coverage-v8": "^4.1.6",
     "autoprefixer": "^10.4.20",
     "baseline-browser-mapping": "^2.8.32",
+    "concurrently": "^9.2.1",
     "eslint": "^9.19.0",
     "eslint-plugin-react": "^7.37.4",
     "eslint-plugin-react-hooks": "^5.0.0",
