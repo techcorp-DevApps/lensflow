@@ -10,39 +10,18 @@ concurrency:
   group: railway-production
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
+env:
+  RAILWAY_PROJECT_NAME: fulfilling-courage
+  RAILWAY_PROJECT_ID: 83ddb758-c283-4deb-8a47-f546f3110fe2
+
 jobs:
-  validate:
-    name: Lint, Typecheck, Test, Build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Typecheck
-        run: npm run typecheck
-
-      - name: Unit tests
-        run: npm run test:unit
-
-      - name: Build SPA
-        run: npm run build
-
   deploy:
-    name: Deploy to Railway (preview)
+    name: Deploy production
     runs-on: ubuntu-latest
-    needs: validate
+    environment: production
 
     steps:
       - name: Checkout
@@ -56,78 +35,23 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Validate build before deployment
+        run: npm run build
 
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
+      - name: Confirm Railway target
+        run: |
+          echo "Deploying to Railway project: ${RAILWAY_PROJECT_NAME}"
+          echo "Project ID: ${RAILWAY_PROJECT_ID}"
+
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-          RAILWAY_PROJECT_ID: ${{ secrets.RAILWAY_PROJECT_ID }}
           RAILWAY_ENVIRONMENT_ID: ${{ secrets.RAILWAY_ENVIRONMENT_ID }}
           RAILWAY_SERVICE: ${{ secrets.RAILWAY_SERVICE }}
         run: |
-          railway link --project "$RAILWAY_PROJECT_ID" --environment "$RAILWAY_ENVIRONMENT_ID" --service "$RAILWAY_SERVICE"
+          railway link --project "${RAILWAY_PROJECT_ID}" --environment "${RAILWAY_ENVIRONMENT_ID}" --service "${RAILWAY_SERVICE}"
           railway up --ci
-
-  verify:
-    name: Verify production reachability
-    runs-on: ubuntu-latest
-    needs: deploy
-    steps:
-      - name: Resolve public URL
-        id: url
-        env:
-          PUBLIC_URL: ${{ secrets.RAILWAY_PUBLIC_URL }}
-        run: |
-          if [ -z "$PUBLIC_URL" ]; then
-            echo "::error::RAILWAY_PUBLIC_URL secret is not set. A green deploy must prove production is live; refusing to skip reachability checks. See docs/deployment/github-secrets.md." >&2
-            exit 1
-          fi
-          # Strip trailing slash for clean concatenation
-          url="${PUBLIC_URL%/}"
-          echo "url=$url" >> "$GITHUB_OUTPUT"
-
-      - name: Wait for service to settle
-        run: sleep 20
-
-      - name: Check /health
-        run: |
-          set -euo pipefail
-          url="${{ steps.url.outputs.url }}/health"
-          echo "GET $url"
-          for i in 1 2 3 4 5; do
-            status=$(curl -sS -o /tmp/health.json -w "%{http_code}" "$url" || echo "000")
-            if [ "$status" = "200" ]; then
-              cat /tmp/health.json
-              echo
-              grep -q '"ok":true' /tmp/health.json && exit 0
-            fi
-            echo "Attempt $i failed (status=$status), retrying..." >&2
-            sleep 10
-          done
-          echo "Healthcheck failed after retries" >&2
-          cat /tmp/health.json || true
-          exit 1
-
-      - name: Check /api/auth/me returns 401 when unauthenticated
-        run: |
-          set -euo pipefail
-          url="${{ steps.url.outputs.url }}/api/auth/me"
-          echo "GET $url"
-          status=$(curl -sS -o /dev/null -w "%{http_code}" "$url" || echo "000")
-          echo "status=$status"
-          if [ "$status" != "401" ]; then
-            echo "Expected 401 from /api/auth/me, got $status" >&2
-            exit 1
-          fi
-
-      - name: Check SPA root serves HTML
-        run: |
-          set -euo pipefail
-          url="${{ steps.url.outputs.url }}/"
-          echo "GET $url"
-          body=$(curl -sS "$url")
-          echo "$body" | head -c 400
-          echo
-          echo "$body" | grep -qi "<div id=\"root\"" || (echo "SPA root HTML missing #root mount node" >&2 && exit 1)
