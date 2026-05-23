@@ -1,5 +1,6 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState, useEffect, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { Plus, Search, Calendar, MoreHorizontal, Pencil, Trash2, Link2 } from "lucide-react";
@@ -11,6 +12,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useToast } from "@/components/ui/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import BookingForm from "@/components/bookings/BookingForm";
+import ErrorState from "@/components/ErrorState";
 
 const statusStyles = {
   pending: "bg-yellow-100 text-yellow-800",
@@ -30,7 +32,7 @@ export default function Bookings() {
   const currentUserEmailRef = useRef(null);
 
   useEffect(() => {
-    base44.auth.me().then(u => { currentUserEmailRef.current = u?.email; }).catch(() => {});
+    apiClient.auth.me().then(u => { currentUserEmailRef.current = u?.email; }).catch(() => {});
   }, []);
 
   // Check for ?new=true query param
@@ -42,13 +44,13 @@ export default function Bookings() {
     }
   }, []);
 
-  const { data: bookings = [], isLoading } = useQuery({
+  const { data: bookings = [], isLoading, error, refetch } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list("-session_date"),
+    queryFn: () => apiClient.entities.Booking.list("-session_date"),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.Booking.create(data),
+    mutationFn: (/** @type {any} */ data) => apiClient.entities.Booking.create(data),
     onSuccess: async (created) => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       setShowForm(false);
@@ -57,7 +59,7 @@ export default function Bookings() {
         const sessionDate = created.session_date
           ? format(new Date(created.session_date), "EEEE, MMMM d, yyyy 'at' h:mm a")
           : "TBD";
-        await base44.integrations.Core.SendEmail({
+        await apiClient.integrations.Core.SendEmail({
           to: currentUserEmailRef.current,
           subject: `New booking request from ${created.client_name}`,
           body: `A new booking request has been created.\n\nClient: ${created.client_name}\nEmail: ${created.client_email}\nSession Type: ${created.session_type}\nDate: ${sessionDate}\nLocation: ${created.location || "Not specified"}\n${created.notes ? `Notes: ${created.notes}` : ""}`,
@@ -73,7 +75,7 @@ export default function Bookings() {
       ? format(new Date(booking.session_date), "EEEE, MMMM d, yyyy 'at' h:mm a")
       : "TBD";
     const clientEmail = `Hi ${booking.client_name},\n\nGreat news! Your photography session has been confirmed. Here's a summary:\n\n📸 Session Type: ${booking.session_type?.charAt(0).toUpperCase() + booking.session_type?.slice(1)}\n📅 Date & Time: ${sessionDate}\n📍 Location: ${booking.location || "To be confirmed"}\n💰 Price: ${booking.price ? `$${booking.price}` : "To be discussed"}\n\n${booking.notes ? `Notes: ${booking.notes}\n\n` : ""}What to expect next:\n- You'll receive a contract to review and sign shortly.\n- We'll send a reminder 48 hours before your session.\n- Feel free to reply to this email with any questions.\n\nWe're looking forward to working with you!\n\nWarm regards,\nThe LensFlow Team`;
-    await base44.integrations.Core.SendEmail({
+    await apiClient.integrations.Core.SendEmail({
       to: currentUserEmailRef.current,
       subject: `[Forward to client] Confirmation for ${booking.client_name} — ${booking.session_type} session`,
       body: `Please forward this confirmation to your client at ${booking.client_email}:\n\n---\n\n${clientEmail}`,
@@ -81,7 +83,7 @@ export default function Bookings() {
   };
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.Booking.update(id, data),
+    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => apiClient.entities.Booking.update(id, data),
     onSuccess: async (_, { data }) => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       if (data.status === "confirmed" && editBooking?.status !== "confirmed") {
@@ -95,7 +97,7 @@ export default function Bookings() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.Booking.delete(id),
+    mutationFn: (/** @type {string} */ id) => apiClient.entities.Booking.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       toast({ title: "Booking deleted" });
@@ -106,7 +108,7 @@ export default function Bookings() {
     let token = booking.access_token;
     if (!token) {
       token = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-      await base44.entities.Booking.update(booking.id, { access_token: token });
+      await apiClient.entities.Booking.update(booking.id, { access_token: token });
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
     }
     const url = `${window.location.origin}/booking-status?token=${token}`;
@@ -145,6 +147,10 @@ export default function Bookings() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input placeholder="Search bookings..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
       </div>
+
+      {error && (
+        <ErrorState title="Couldn't load bookings" error={error} onRetry={() => refetch()} />
+      )}
 
       {/* Table */}
       <div className="bg-card border border-border rounded-xl overflow-hidden">

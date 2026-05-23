@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { galleriesApi } from "@/api/galleries";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Upload, Trash2, Image, Star, Copy, Check, ExternalLink } from "lucide-react";
@@ -16,11 +16,11 @@ export default function GalleryDetail({ gallery, onClose, onDelete }) {
 
   const { data: images = [], isLoading } = useQuery({
     queryKey: ["gallery-images", gallery.id],
-    queryFn: () => base44.entities.GalleryImage.filter({ gallery_id: gallery.id }, "order"),
+    queryFn: () => apiClient.entities.GalleryImage.filter({ gallery_id: gallery.id }, "order"),
   });
 
   const updateGalleryMutation = useMutation({
-    mutationFn: (data) => galleriesApi.update(gallery.id, data),
+    mutationFn: (/** @type {any} */ data) => galleriesApi.update(gallery.id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["galleries"] });
       toast({ title: "Gallery updated" });
@@ -28,7 +28,7 @@ export default function GalleryDetail({ gallery, onClose, onDelete }) {
   });
 
   const deleteImageMutation = useMutation({
-    mutationFn: (id) => base44.entities.GalleryImage.delete(id),
+    mutationFn: (/** @type {string} */ id) => apiClient.entities.GalleryImage.delete(id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["gallery-images", gallery.id] }),
   });
 
@@ -37,8 +37,8 @@ export default function GalleryDetail({ gallery, onClose, onDelete }) {
     if (!files.length) return;
     setUploading(true);
     for (const file of files) {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      await base44.entities.GalleryImage.create({
+      const { file_url } = await apiClient.integrations.Core.UploadFile({ file });
+      await apiClient.entities.GalleryImage.create({
         gallery_id: gallery.id,
         image_url: file_url,
         thumbnail_url: file_url,
@@ -48,7 +48,7 @@ export default function GalleryDetail({ gallery, onClose, onDelete }) {
     }
     // Set first uploaded image as cover if none exists
     if (!gallery.cover_image_url && files.length > 0) {
-      const updatedImages = await base44.entities.GalleryImage.filter({ gallery_id: gallery.id });
+      const updatedImages = await apiClient.entities.GalleryImage.filter({ gallery_id: gallery.id });
       if (updatedImages.length > 0) {
         await updateGalleryMutation.mutateAsync({ cover_image_url: updatedImages[0].image_url });
       }
@@ -148,7 +148,7 @@ export default function GalleryDetail({ gallery, onClose, onDelete }) {
             variant="outline"
             className="gap-2"
             onClick={async () => {
-              await base44.integrations.Core.SendEmail({
+              await apiClient.integrations.Core.SendEmail({
                 to: gallery.client_email,
                 subject: `Your Photo Gallery is Ready — ${gallery.title}`,
                 body: `

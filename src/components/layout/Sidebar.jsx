@@ -5,20 +5,21 @@ import {
   Image, CheckSquare, Bell, ChevronLeft, ChevronRight,
   LogOut
 } from "lucide-react";
-import { base44 } from "@/api/base44Client";
+import { useAuth } from "@/lib/AuthContext";
 
 const navItems = [
-  { path: "/", icon: LayoutDashboard, label: "Dashboard" },
-  { path: "/bookings", icon: CalendarDays, label: "Bookings" },
-  { path: "/contracts", icon: FileText, label: "Contracts" },
-  { path: "/galleries", icon: Image, label: "Galleries" },
-  { path: "/checklists", icon: CheckSquare, label: "Checklists" },
-  { path: "/reminders", icon: Bell, label: "Reminders" },
+  { path: "/admin/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+  { path: "/admin/bookings", icon: CalendarDays, label: "Bookings" },
+  { path: "/admin/contracts", icon: FileText, label: "Contracts" },
+  { path: "/admin/galleries", icon: Image, label: "Galleries" },
+  { path: "/admin/checklists", icon: CheckSquare, label: "Checklists" },
+  { path: "/admin/reminders", icon: Bell, label: "Reminders" },
 ];
 
 export default function Sidebar({ mobileOpen, onMobileClose }) {
   const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
+  const { logout } = useAuth();
 
   return (
     <aside className={`fixed left-0 top-0 h-screen bg-sidebar text-sidebar-foreground z-40 flex flex-col transition-all duration-300
@@ -45,8 +46,8 @@ export default function Sidebar({ mobileOpen, onMobileClose }) {
       {/* Nav */}
       <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = location.pathname === item.path || 
-            (item.path !== "/" && location.pathname.startsWith(item.path));
+          const isActive = location.pathname === item.path ||
+            location.pathname.startsWith(item.path + '/');
           return (
             <Link
               key={item.path}
@@ -68,7 +69,7 @@ export default function Sidebar({ mobileOpen, onMobileClose }) {
       {/* Footer */}
       <div className="px-3 pb-4 space-y-1">
         <button
-          onClick={() => base44.auth.logout()}
+          onClick={() => logout()}
           className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground transition-all w-full"
         >
           <LogOut className="w-5 h-5 shrink-0" />

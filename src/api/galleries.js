@@ -1,13 +1,12 @@
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { appParams } from "@/lib/app-params";
 
 const GALLERY_PATH = "/entities/Gallery";
 
 const buildHeaders = () => {
   const headers = { "Content-Type": "application/json" };
-  if (appParams.token) {
-    headers.Authorization = `Bearer ${appParams.token}`;
-  }
+  const token = apiClient.auth.getToken?.() || appParams.token;
+  if (token) headers.Authorization = `Bearer ${token}`;
   return headers;
 };
 
@@ -35,6 +34,7 @@ const request = async (path = "", options = {}) => {
   return response.text();
 };
 
+/** @param {{ q?: any, limit?: number, skip?: number, sort_by?: string }} [opts] */
 const buildQuery = ({ q, limit, skip, sort_by } = {}) => {
   const params = new URLSearchParams();
   if (q) params.set("q", typeof q === "string" ? q : JSON.stringify(q));
@@ -48,19 +48,19 @@ const buildQuery = ({ q, limit, skip, sort_by } = {}) => {
 export const galleriesApi = {
   list: (options = {}) => {
     if (typeof options === "string") {
-      return base44.entities.Gallery.list(options);
+      return apiClient.entities.Gallery.list(options);
     }
     return request(buildQuery(options));
   },
-  create: (data) => base44.entities.Gallery.create(data),
-  deleteMany: (query = {}) => base44.entities.Gallery.deleteMany(query),
-  bulkCreate: (records) => base44.entities.Gallery.bulkCreate(records),
+  create: (data) => apiClient.entities.Gallery.create(data),
+  deleteMany: (query = {}) => apiClient.entities.Gallery.deleteMany(query),
+  bulkCreate: (records) => apiClient.entities.Gallery.bulkCreate(records),
   bulkUpdate: (records) => request("/bulk", { method: "PUT", body: JSON.stringify(records) }),
   updateMany: ({ query = {}, data = {} }) =>
     request("/update-many", { method: "PATCH", body: JSON.stringify({ query, data }) }),
-  get: (id) => base44.entities.Gallery.get(id),
-  update: (id, data) => base44.entities.Gallery.update(id, data),
-  delete: (id) => base44.entities.Gallery.delete(id),
-  restore: (id) => base44.entities.Gallery.restore(id),
-  filter: (query, sort) => base44.entities.Gallery.filter(query, sort),
+  get: (id) => apiClient.entities.Gallery.get(id),
+  update: (id, data) => apiClient.entities.Gallery.update(id, data),
+  delete: (id) => apiClient.entities.Gallery.delete(id),
+  restore: (id) => apiClient.entities.Gallery.restore(id),
+  filter: (query, sort) => apiClient.entities.Gallery.filter(query, sort),
 };

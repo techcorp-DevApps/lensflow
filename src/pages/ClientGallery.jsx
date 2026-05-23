@@ -1,5 +1,7 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { useParams } from "react-router-dom";
+import { apiClient } from "@/api/client";
 import { galleriesApi } from "@/api/galleries";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Lock, Camera, Download, Heart } from "lucide-react";
@@ -9,9 +11,14 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function ClientGallery() {
+  const params = useParams();
   const urlParams = new URLSearchParams(window.location.search);
-  const galleryPath = window.location.pathname.split("/gallery/")[1];
-  const galleryId = galleryPath || urlParams.get("id");
+  // Canonical: /client-gallery/:id. Legacy: /gallery/:id (still supported by App.jsx).
+  const galleryId =
+    params.id ||
+    window.location.pathname.split("/client-gallery/")[1] ||
+    window.location.pathname.split("/gallery/")[1] ||
+    urlParams.get("id");
 
   const [password, setPassword] = useState("");
   const [authenticated, setAuthenticated] = useState(false);
@@ -19,21 +26,21 @@ export default function ClientGallery() {
   const [lightboxImage, setLightboxImage] = useState(null);
   const queryClient = useQueryClient();
 
-  const { data: gallery, isLoading: loadingGallery } = useQuery({
+  const { data: gallery, isLoading: loadingGallery, error: galleryError } = useQuery({
     queryKey: ["public-gallery", galleryId],
     queryFn: () => galleriesApi.filter({ id: galleryId }),
     enabled: !!galleryId,
     select: (data) => data[0],
   });
 
-  const { data: images = [] } = useQuery({
+  const { data: images = [], error: imagesError, isLoading: loadingImages, refetch: refetchImages } = useQuery({
     queryKey: ["public-gallery-images", galleryId],
-    queryFn: () => base44.entities.GalleryImage.filter({ gallery_id: galleryId }, "order"),
+    queryFn: () => apiClient.entities.GalleryImage.filter({ gallery_id: galleryId }, "order"),
     enabled: authenticated && !!galleryId,
   });
 
   const toggleSelectMutation = useMutation({
-    mutationFn: ({ id, selected }) => base44.entities.GalleryImage.update(id, { selected }),
+    mutationFn: (/** @type {{ id: string, selected: boolean }} */ { id, selected }) => apiClient.entities.GalleryImage.update(id, { selected }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["public-gallery-images", galleryId] }),
   });
 
@@ -59,6 +66,20 @@ export default function ClientGallery() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="w-8 h-8 border-4 border-muted border-t-accent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (galleryError || !gallery) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background font-body p-6">
+        <div className="text-center max-w-sm">
+          <Camera className="w-12 h-12 text-muted-foreground/40 mx-auto mb-3" />
+          <h2 className="text-xl font-heading font-semibold">Gallery unavailable</h2>
+          <p className="text-muted-foreground mt-2">
+            {galleryError?.message || "We couldn't find this gallery. Please check your link or try again later."}
+          </p>
+        </div>
       </div>
     );
   }
@@ -125,6 +146,32 @@ export default function ClientGallery() {
 
       {/* Gallery Grid */}
       <div className="max-w-7xl mx-auto px-6 py-8">
+        {imagesError ? (
+          <div className="text-center py-16 bg-card border border-border rounded-xl text-muted-foreground">
+            <Camera className="w-10 h-10 mx-auto mb-3 text-destructive/60" />
+            <p className="font-medium text-foreground">Couldn't load gallery photos</p>
+            <p className="text-sm mt-1 max-w-md mx-auto">
+              {imagesError.message || "Something went wrong while loading the photos."}
+            </p>
+            <button
+              type="button"
+              onClick={() => refetchImages()}
+              className="mt-4 inline-flex items-center px-4 py-2 rounded-md border border-border text-sm hover:bg-muted"
+            >
+              Try again
+            </button>
+          </div>
+        ) : loadingImages ? (
+          <div className="text-center py-16 text-muted-foreground">
+            <div className="w-8 h-8 border-4 border-muted border-t-accent rounded-full animate-spin mx-auto" />
+            <p className="text-sm mt-3">Loading photos…</p>
+          </div>
+        ) : images.length === 0 ? (
+          <div className="text-center py-16 bg-card border border-border rounded-xl text-muted-foreground">
+            <Camera className="w-10 h-10 mx-auto mb-3 opacity-30" />
+            <p>No photos in this gallery yet.</p>
+          </div>
+        ) : (
         <div className="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
           <AnimatePresence>
             {images.map((img, index) => (
@@ -157,6 +204,7 @@ export default function ClientGallery() {
             ))}
           </AnimatePresence>
         </div>
+        )}
       </div>
 
       {/* Lightbox */}

@@ -1,5 +1,6 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { contractsApi } from "@/api/contracts";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -12,6 +13,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import ContractForm from "@/components/contracts/ContractForm";
 import ContractViewer from "@/components/contracts/ContractViewer";
+import ErrorState from "@/components/ErrorState";
 
 const statusConfig = {
   draft: { icon: Clock, color: "bg-gray-100 text-gray-700", label: "Draft" },
@@ -34,18 +36,18 @@ export default function Contracts() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: contracts = [], isLoading } = useQuery({
+  const { data: contracts = [], isLoading, error, refetch } = useQuery({
     queryKey: ["contracts"],
     queryFn: () => contractsApi.list({ sort_by: "-created_date" }),
   });
 
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list(),
+    queryFn: () => apiClient.entities.Booking.list(),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data) => contractsApi.create(data),
+    mutationFn: (/** @type {any} */ data) => contractsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contracts"] });
       setShowForm(false);
@@ -54,7 +56,7 @@ export default function Contracts() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }) => contractsApi.update(id, data),
+    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => contractsApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["contracts"] });
       toast({ title: "Contract updated" });
@@ -63,7 +65,7 @@ export default function Contracts() {
 
   const sendContract = async (contract) => {
     const signingLink = `${window.location.origin}/sign/${contract.id}`;
-    await base44.integrations.Core.SendEmail({
+    await apiClient.integrations.Core.SendEmail({
       to: contract.client_email,
       subject: `${typeLabels[contract.type] || "Contract"} - Please Review & Sign`,
       body: `
@@ -100,6 +102,10 @@ export default function Contracts() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input placeholder="Search contracts..." value={search} onChange={e => setSearch(e.target.value)} className="pl-9" />
       </div>
+
+      {error && (
+        <ErrorState title="Couldn't load contracts" error={error} onRetry={() => refetch()} />
+      )}
 
       {/* Contract Cards Grid */}
       {isLoading ? (

@@ -1,5 +1,6 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Plus, CheckSquare, Camera, Package, MapPin, MessageSquare, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import ChecklistEditor from "@/components/checklists/ChecklistEditor";
 import ShootChecklistView from "@/components/checklists/ShootChecklistView";
+import ErrorState from "@/components/ErrorState";
 
 const categoryIcons = {
   gear: Package,
@@ -44,23 +46,23 @@ export default function Checklists() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: templates = [], isLoading: loadingTemplates } = useQuery({
+  const { data: templates = [], isLoading: loadingTemplates, error: templatesError, refetch: refetchTemplates } = useQuery({
     queryKey: ["checklist-templates"],
-    queryFn: () => base44.entities.ChecklistTemplate.list(),
+    queryFn: () => apiClient.entities.ChecklistTemplate.list(),
   });
 
-  const { data: shootChecklists = [], isLoading: loadingChecklists } = useQuery({
+  const { data: shootChecklists = [], isLoading: loadingChecklists, error: checklistsError, refetch: refetchChecklists } = useQuery({
     queryKey: ["shoot-checklists"],
-    queryFn: () => base44.entities.ShootChecklist.list("-created_date"),
+    queryFn: () => apiClient.entities.ShootChecklist.list("-created_date"),
   });
 
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list(),
+    queryFn: () => apiClient.entities.Booking.list(),
   });
 
   const createTemplateMutation = useMutation({
-    mutationFn: (data) => base44.entities.ChecklistTemplate.create(data),
+    mutationFn: (/** @type {any} */ data) => apiClient.entities.ChecklistTemplate.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checklist-templates"] });
       setShowEditor(false);
@@ -69,7 +71,7 @@ export default function Checklists() {
   });
 
   const updateTemplateMutation = useMutation({
-    mutationFn: ({ id, data }) => base44.entities.ChecklistTemplate.update(id, data),
+    mutationFn: (/** @type {{ id: string, data: any }} */ { id, data }) => apiClient.entities.ChecklistTemplate.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["checklist-templates"] });
       setShowEditor(false);
@@ -80,7 +82,7 @@ export default function Checklists() {
 
   const createFromTemplate = async (template, bookingId) => {
     const items = template.items.map(item => ({ ...item, completed: false }));
-    await base44.entities.ShootChecklist.create({
+    await apiClient.entities.ShootChecklist.create({
       booking_id: bookingId,
       session_type: template.session_type,
       items,
@@ -104,7 +106,9 @@ export default function Checklists() {
       {/* Templates Section */}
       <div>
         <h2 className="text-lg font-heading font-semibold mb-4">Checklist Templates</h2>
-        {loadingTemplates ? (
+        {templatesError ? (
+          <ErrorState title="Couldn't load templates" error={templatesError} onRetry={() => refetchTemplates()} />
+        ) : loadingTemplates ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-40 rounded-xl" />)}
           </div>
@@ -143,7 +147,9 @@ export default function Checklists() {
       {/* Active Checklists */}
       <div>
         <h2 className="text-lg font-heading font-semibold mb-4">Active Shoot Checklists</h2>
-        {loadingChecklists ? (
+        {checklistsError ? (
+          <ErrorState title="Couldn't load checklists" error={checklistsError} onRetry={() => refetchChecklists()} />
+        ) : loadingChecklists ? (
           <div className="space-y-3">
             {[...Array(3)].map((_, i) => <Skeleton key={i} className="h-16 rounded-lg" />)}
           </div>

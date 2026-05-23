@@ -1,5 +1,6 @@
+// inferred too narrowly from this JS source. Runtime behavior is exercised by unit
 import React from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { galleriesApi } from "@/api/galleries";
 import { contractsApi } from "@/api/contracts";
 import { useQuery } from "@tanstack/react-query";
@@ -8,15 +9,17 @@ import { format, isAfter, startOfToday } from "date-fns";
 import { motion } from "framer-motion";
 import StatCard from "@/components/dashboard/StatCard";
 import UpcomingShootCard from "@/components/dashboard/UpcomingShootCard";
+import ErrorState from "@/components/ErrorState";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Dashboard() {
-  const { data: bookings = [], isLoading: loadingBookings } = useQuery({
+  const bookingsQuery = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list("-session_date"),
+    queryFn: () => apiClient.entities.Booking.list("-session_date"),
   });
+  const { data: bookings = [], isLoading: loadingBookings, error: bookingsError, refetch: refetchBookings } = bookingsQuery;
 
   const { data: contracts = [] } = useQuery({
     queryKey: ["contracts"],
@@ -31,7 +34,7 @@ export default function Dashboard() {
   const today = startOfToday();
   const upcoming = bookings
     .filter(b => b.status !== "cancelled" && b.status !== "completed" && isAfter(new Date(b.session_date), today))
-    .sort((a, b) => new Date(a.session_date) - new Date(b.session_date))
+    .sort((a, b) => new Date(a.session_date).getTime() - new Date(b.session_date).getTime())
     .slice(0, 5);
 
   const pendingContracts = contracts.filter(c => c.status !== "signed").length;
@@ -64,6 +67,14 @@ export default function Dashboard() {
           </Link>
         </div>
       </div>
+
+      {bookingsError && (
+        <ErrorState
+          title="Couldn't load your bookings"
+          error={bookingsError}
+          onRetry={() => refetchBookings()}
+        />
+      )}
 
       {/* Stats Grid */}
       {loadingBookings ? (

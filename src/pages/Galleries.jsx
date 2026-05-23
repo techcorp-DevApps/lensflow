@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { base44 } from "@/api/base44Client";
+import { apiClient } from "@/api/client";
 import { galleriesApi } from "@/api/galleries";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -11,6 +11,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import GalleryForm from "@/components/galleries/GalleryForm";
 import GalleryDetail from "@/components/galleries/GalleryDetail";
+import ErrorState from "@/components/ErrorState";
 
 const statusStyles = {
   preparing: "bg-yellow-100 text-yellow-800",
@@ -24,14 +25,14 @@ export default function Galleries() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const { data: galleries = [], isLoading } = useQuery({
+  const { data: galleries = [], isLoading, error, refetch } = useQuery({
     queryKey: ["galleries"],
     queryFn: () => galleriesApi.list("-created_date"),
   });
 
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings"],
-    queryFn: () => base44.entities.Booking.list(),
+    queryFn: () => apiClient.entities.Booking.list(),
   });
 
   const createMutation = useMutation({
@@ -63,7 +64,9 @@ export default function Galleries() {
         </Button>
       </div>
 
-      {isLoading ? (
+      {error ? (
+        <ErrorState title="Couldn't load galleries" error={error} onRetry={() => refetch()} />
+      ) : isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {[...Array(6)].map((_, i) => <Skeleton key={i} className="h-64 rounded-xl" />)}
         </div>
